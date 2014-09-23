@@ -1,6 +1,6 @@
 <%@include file="headerExam.jsp" %>
 	<p>Hello World!</p>
-	<form acion="action/gotoTripAdvasor_action.jsp">
+	<form name="frm" method="post" action="action/gotoTripAdvisior_action.jsp">
 		<table>
 			<tr>
 				<td>Start Date</td>
@@ -15,5 +15,7 @@
 				<td><input type="text" name="location" value /></td>
 			</tr>
 		</table>
+		<input type="submit" name="submit" value="Find" />
 	</form>
+	
 <%@include file="footerExam.jsp" %>

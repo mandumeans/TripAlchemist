@@ -4,5 +4,12 @@
 <html>
 	<head>
 		<title>Trip Alchemist exmaple</title>
+		<link href="../CSS/bootstrap.min.css" rel="stylesheet">
+		<link href ="../CSS/datepicker.css" rel="stylesheet">
+		<link href="../CSS/index.css" rel="stylesheet">
+
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+		<script type ="text/javascript" src ="../js/bootstrap-datepicker.js"></script>
 	</head>
 	<body>
