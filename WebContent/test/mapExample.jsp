@@ -9,7 +9,8 @@
 		html { height : 100% }
 		body { height : 100%; margin: 0; padding: 0 }
 		#map_canvas {display:inline-block;  }
-		.leftContent {background: grey; height:540px; width: 10%; top:0px; display:inline-block; overflow: scroll;}
+		.leftContent {background: lightgray; height:540px; width: 500px; top:0px; display:inline-block; overflow: auto;}
+		.placeListItem {}
 	</style>
 	<script type="text/javascript" 
 			src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-EDvVM7eLhn0JWHezI7x2eGmAhre2BjE&sensor=FALSE">
@@ -17,14 +18,16 @@
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script type="text/javascript">
 		var map;
+		var geocoder;
 		var places = new Array();
 		
-		function placeInfo(lat,lng,address,name,type){
+		function placeInfo(lat,lng,address,name,type,marker){
 			this.lat = lat;	//latitude
 			this.lng = lng;	//longitude
 			this.address = address;
 			this.name = name;
 			this.type = type;	//1.landmark 2.food 3.accomodation 4.shopping 5.entertaining 6.etc 
+			this.marker = marker;
 		}
 		
 		placeInfo.prototype.getInfo = function(){
@@ -36,16 +39,51 @@
 		}
 		
 		function initialize(){
+			geocoder = new google.maps.Geocoder();
 			var mapOptions = {
 					center : new google.maps.LatLng(36.514465, 127.823751),
 					zoom: 7,
 					mapTypeId: google.maps.MapTypeId.ROADMAP
 			};
 			map = new google.maps.Map(document.getElementById("map_canvas"),mapOptions);	
-			
-			google.maps.event.addListener(map, 'click',function(event){
+			map.set("disableDoubleClickZoom", true);
+			google.maps.event.addListener(map, 'dblclick',function(event){
 				insertNewPlace(event.latLng);
-				placeMarker(event.latLng);
+			});
+		}
+		
+		function insertNewPlace(location){
+			//push place information to places array
+			var lat = location.lat();
+			var lng = location.lng();
+			var realAddress = getRealAddress(lat, lng, function(result){
+				if(result === null ||typeof result === 'undefined'){
+				    $('#placeList').append('<li class="placeListItem">(' + lat.toFixed(2) + ',' + lng.toFixed(2) + ')</li>');
+				} else {
+				    $('#placeList').append('<li class="placeListItem">' + result + '</li>');
+				}
+				//push place information to array
+				places.push(new placeInfo(location.lat(), location.lng(),result,'','',placeMarker(location)));
+			}, function(result){
+				alert('failed to get address' + result);
+			});
+		}
+
+		function getRealAddress(lat, lng, suceessCallback, failCallback){
+			var latlng = new google.maps.LatLng(lat, lng);
+			var result;
+			
+			//get address from google web server asynchronously
+			geocoder.geocode({latLng: latlng}, function(results, status){
+				if(status == google.maps.GeocoderStatus.OK){
+					if(results[0]){
+						suceessCallback(results[0].formatted_address);	
+					} else {
+						suceessCallback('(' + lat + ',' + lng + ')');
+					}
+				} else {
+					failCallback('(' + lat.toFixed(2) + ',' + lng.toFixed(2) + ')');
+				}
 			});
 		}
 		
@@ -53,19 +91,39 @@
 			var marker = new google.maps.Marker({
 				position: location,
 				map: map,
+				icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + (parseInt(places.length) + 1) + '|FE6256|000000',
 				title: 'Click for detail'
 			});
 			google.maps.event.addListener(marker, 'click', function(){
-				map.setZoom(7);
-				map.setCenter(marker.getPosition());
+				deletePlace(marker)
 			});
+			return marker;
 		}
 		
-		function insertNewPlace(location){
-			//push place information to places array
-			places.push(new placeInfo(location.lat(), location.lng(),'','',''));
-		    $('#placeList').append('<li class="placeListItem">' + location + '</li>');
+		function deletePlace(marker){
+			for(var i=0;i<places.length;i++){
+				if(places[i].marker === marker){
+					alert(places[i].lat + ',' + places[i].lng);
+					places[i].marker.setMap(null);
+					places.splice(i,1);
+					refreshMarkerList();
+				}
+			}
 		}
+		
+		function refreshMarkerList(){
+			for(var i=0;i<places.length;i++){
+				places[i].marker.setIcon('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + (parseInt(i) + 1) + '|FE6256|000000');
+			}
+			$('#placeList').empty();
+			
+			for(var i=0;i<places.length;i++){
+			    $('#placeList').append('<li class="placeListItem">' + places[i].address + '</li>');
+			}
+		}
+		
+		
+		
 	</script>
 	</head>
 	<body onload="initialize()">
