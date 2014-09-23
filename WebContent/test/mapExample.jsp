@@ -8,11 +8,13 @@
 	<style type="text/css">
 		html { height : 100% }
 		body { height : 100%; margin: 0; padding: 0 }
-		#map_canvas { height : 30%; width : 30%  }
+		#map_canvas {display:inline-block;  }
+		.leftContent {background: grey; height:540px; width: 10%; top:0px; display:inline-block; overflow: scroll;}
 	</style>
 	<script type="text/javascript" 
 			src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-EDvVM7eLhn0JWHezI7x2eGmAhre2BjE&sensor=FALSE">
 	</script>
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script type="text/javascript">
 		var map;
 		var places = new Array();
@@ -62,10 +64,15 @@
 		function insertNewPlace(location){
 			//push place information to places array
 			places.push(new placeInfo(location.lat(), location.lng(),'','',''));
+		    $('#placeList').append('<li class="placeListItem">' + location + '</li>');
 		}
 	</script>
 	</head>
 	<body onload="initialize()">
 		<div id="map_canvas" style="width:940px;height:540px"></div>
+		<div class="leftContent">
+			<ul id="placeList">
+            </ul>
+		</div>
 	</body>
 </html>
