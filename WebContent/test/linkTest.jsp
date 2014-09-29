@@ -27,19 +27,18 @@
 </script>
 	<table>
 		<tr>
-			<td>Start Date</td>
-			<td><input type="text" class ="form-control" data-date-format="yyyy-mm-dd" placeholder="Starting Date"  id="start_date" name="startDateJ" value /></td>
+			<td colspan="2"><input type="text" class ="form-control" data-date-format="yyyy-mm-dd" placeholder="Starting Date"  id="start_date" name="startDateJ" value /></td>
 		</tr>
 		<tr>
-			<td>End Date</td>
-			<td><input type="text" class ="form-control" data-date-format="yyyy-mm-dd" placeholder="Ending Date" id="end_date" name="endDateJ" value /></td>
+			<td colspan="2"><input type="text" class ="form-control" data-date-format="yyyy-mm-dd" placeholder="Ending Date" id="end_date" name="endDateJ" value /></td>
 		</tr>
 		<tr>
 			<td>Location</td>
 			<td><input type="text" name="locationJ" id="location" value /></td>
 		</tr>
 	</table>
-	<input type="button" name="find" value="Find Place" onclick="bnbFunction()"/>
+	<input type="button" name="find" value="Go to Airbnb" onclick="bnbFunction()"/>
+	<input type="button" name="find" value="Go to Tripadvisor" onclick="tripAFunction()"/>
 	<script>
 	function bnbFunction(){
 		var startDate = document.getElementById("start_date").value;
@@ -49,7 +48,18 @@
 		console.log(startDate);
 		console.log(endDate);
 		console.log(loc);
-		location.replace("https://www.airbnb.com/s/"+loc+"?checkin="+startDate+"&checkout="+endDate+"&source=bb")
+		window.open("https://www.airbnb.com/s/"+loc+"?checkin="+startDate+"&checkout="+endDate+"&source=bb", "_blank")
+	}
+	
+	function tripAFunction(){
+		var startDate = document.getElementById("start_date").value;
+		var endDate = document.getElementById("end_date").value;
+		var loc = document.getElementById("location").value;
+
+		console.log(startDate);
+		console.log(endDate);
+		console.log(loc);
+		window.open("http://www.tripadvisor.com/Hotels-g186338-"+loc+"-Hotels.html", "_blank")
 	}
 	</script>
 <%@include file="footerExam.jsp" %>
