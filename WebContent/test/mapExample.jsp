@@ -12,10 +12,14 @@
 		.leftContent {background: lightgray; height:540px; width: 500px; top:0px; display:inline-block; overflow: auto;}
 		.placeListItem {}
 	</style>
+	<link href="../css/bootstrap.min.css" rel="stylesheet">
+	<link href ="../css/datepicker.css" rel="stylesheet">
 	<script type="text/javascript" 
 			src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-EDvVM7eLhn0JWHezI7x2eGmAhre2BjE&sensor=FALSE">
 	</script>
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+	<script type ="text/javascript" src ="../js/bootstrap-datepicker.js"></script>
 	<script type="text/javascript">
 		var map;
 		var geocoder;
@@ -58,9 +62,9 @@
 			var lng = location.lng();
 			var realAddress = getRealAddress(lat, lng, function(result){
 				if(result === null ||typeof result === 'undefined'){
-				    $('#placeList').append('<li class="placeListItem">(' + lat.toFixed(2) + ',' + lng.toFixed(2) + ')</li>');
+				    $('#placeList').append('<li class="list-group-item">(' + lat.toFixed(2) + ',' + lng.toFixed(2) + ')</li>');
 				} else {
-				    $('#placeList').append('<li class="placeListItem">' + result + '</li>');
+				    $('#placeList').append('<li class="list-group-item">' + result + '</li>');
 				}
 				//push place information to array
 				places.push(new placeInfo(location.lat(), location.lng(),result,'','',placeMarker(location)));
@@ -118,19 +122,51 @@
 			$('#placeList').empty();
 			
 			for(var i=0;i<places.length;i++){
-			    $('#placeList').append('<li class="placeListItem">' + places[i].address + '</li>');
+			    $('#placeList').append('<li class="list-group-item">' + places[i].address + '</li>');
 			}
 		}
 		
 		
 		
 	</script>
+	<script type="text/javascript">
+	$(document).ready(function () {
+		var nowTemp = new Date();
+		var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0); 
+        var checkin = $('#start_date').datepicker({
+        	onRender: function(date) {
+        	return date.valueOf() < now.valueOf() ? 'disabled' : '';
+            }
+        }).on('changeDate', function(ev) {
+        	if (ev.date.valueOf() > checkout.date.valueOf()) {
+            	var newDate = new Date(ev.date)
+                newDate.setDate(newDate.getDate() + 1);
+                checkout.setValue(newDate);
+            }
+            checkin.hide();
+            $('#end_date')[0].focus();
+       }).data('datepicker');
+       var checkout = $('#end_date').datepicker({
+       		onRender: function(date) {
+            return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
+            }
+       }).on('changeDate', function(ev) {
+       		checkout.hide();
+       		alert((checkout.date - checkin.date) / 86400000);
+       }).data('datepicker');
+    });
+	
+	
+</script>
 	</head>
-	<body onload="initialize()">
-		<div id="map_canvas" style="width:940px;height:540px"></div>
+	<body onload="initialize()">    		
+		<h2>여행을 시작할 날짜와 끝낼 날짜를 입력하세요.</h2>
+    	<p><input type ="text" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id="start_date"></p>
+    	<p><input type ="text" class = "form-control"data-date-format="yyyy-mm-dd" placeholder="마지막 날짜" id="end_date"></p>
+		<div id="map_canvas" style="width: 940px; height: 540px"></div>
 		<div class="leftContent">
-			<ul id="placeList">
-            </ul>
+			<ul id="placeList" class="list-group">
+			</ul>
 		</div>
 	</body>
 </html>
