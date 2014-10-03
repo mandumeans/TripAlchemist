@@ -8,7 +8,7 @@
 	<style type="text/css">
 		html { height : 100% }
 		body { height : 100%; margin: 0; padding: 0 }
-		#map_canvas {display:inline-block;  }
+		#map_canvas {display:inline-block;}
 		.leftContent {background: lightgray; height:540px; width: 500px; top:0px; display:inline-block; overflow: auto;}
 		.placeListItem {}
 	</style>
@@ -21,12 +21,17 @@
 	<script type="text/javascript" src="../js/bootstrap.min.js"></script>
 	<script type ="text/javascript" src ="../js/bootstrap-datepicker.js"></script>
 	<script type="text/javascript">
-		var map;places
+		var map;
 		var geocoder;
-		var days = new Array();
-		var places = new Array();
-		var nowActiveTab;
 		
+		//날들을 저장함 (2차원배열)
+		var days = new Array();
+		
+		//현재 선택된 탭과 그 날짜가 뭔지 저장하는 상태함수
+		var nowActiveTab;
+		var nowActiveIdx;
+		
+		//명소들을 저장하기위한 구조체
 		function placeInfo(day,lat,lng,address,name,type,marker){
 			this.day = day;
 			this.lat = lat;	//latitude
@@ -41,6 +46,7 @@
 			return this.lat + ', ' + this.lng;
 		}
 		
+		//교통정보를 저장하기 위한 구조체
 		function transportInfo(){
 			var type = ''; //1.car 2.bus 3.train 4.taxi 5.walk 6.bicycle 7.
 		}
@@ -50,7 +56,8 @@
 			var mapOptions = {
 					center : new google.maps.LatLng(36.514465, 127.823751),
 					zoom: 7,
-					mapTypeId: google.maps.MapTypeId.ROADMAP
+					mapTypeId: google.maps.MapTypeId.ROADMAP,
+				    draggableCursor: 'default'
 			};
 			map = new google.maps.Map(document.getElementById("map_canvas"),mapOptions);	
 			map.set("disableDoubleClickZoom", true);
@@ -63,15 +70,21 @@
 			//push place information to places array
 			var lat = location.lat();
 			var lng = location.lng();
-			var realAddress = getRealAddress(lat, lng, function(result){
+			
+			//구글 API로 부터 실제 주소를 받아온다.
+			var realAddress = getRealAddress(lat, lng, 
+			function(result){	
+				//실제 주소 받아오는게 성공하면 현재 활성화된 탭에 리스트를 추가해줌
 				if(result === null ||typeof result === 'undefined'){
 				    $(nowActiveTab).append('<li class="list-group-item">(' + lat.toFixed(2) + ',' + lng.toFixed(2) + ')</li>');
 				} else {
 				    $(nowActiveTab).append('<li class="list-group-item">' + result + '</li>');
 				}
-				//push place information to array
-				places.push(new placeInfo(nowActiveTab, location.lat(), location.lng(),result,'','',placeMarker(location)));
-			}, function(result){
+				
+				//days 2차원 배열에 현재 활성화된 날짜에 placeInfo구조체를 배열에 집어넣고 Marker도 찍는다.			
+				days[nowActiveIdx].push(new placeInfo(nowActiveTab, location.lat(), location.lng(),result,'','',placeMarker(location)));
+			}, 
+			function(result){
 				alert('failed to get address' + result);
 			});
 		}
@@ -98,34 +111,41 @@
 			var marker = new google.maps.Marker({
 				position: location,
 				map: map,
-				icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + (parseInt(places.length) + 1) + '|FE6256|000000',
+				icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + (parseInt(days[nowActiveIdx].length) + 1) + '|FE6256|000000',
 				title: 'Click for detail'
 			});
 			google.maps.event.addListener(marker, 'click', function(){
-				//deletePlace(marker)
+				deletePlace(marker)
 			});
 			return marker;
 		}
 		
 		function deletePlace(marker){
-			for(var i=0;i<places.length;i++){
-				if(places[i].marker === marker){
-					alert(places[i].lat + ',' + places[i].lng);
-					places[i].marker.setMap(null);
-					places.splice(i,1);
+			for(var i=0;i<days[nowActiveIdx].length;i++){
+				if(days[nowActiveIdx][i].marker === marker){
+					days[nowActiveIdx][i].marker.setMap(null);
+					days[nowActiveIdx].splice(i,1);
 					refreshMarkerList();
 				}
 			}
 		}
 		
 		function refreshMarkerList(){
-			for(var i=0;i<places.length;i++){
-				places[i].marker.setIcon('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + (parseInt(i) + 1) + '|FE6256|000000');
+			
+			for(var i=0;i<days.length;i++){
+				for(var j=0;j<days[i].length;j++){
+					days[i][j].marker.setMap(null);	
+				}
+			}
+			
+			for(var i=0;i<days[nowActiveIdx].length;i++){
+				days[nowActiveIdx][i].marker.setMap(map);
+				days[nowActiveIdx][i].marker.setIcon('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + (parseInt(i) + 1) + '|FE6256|000000');
 			}
 			$(nowActiveTab).empty();
 			
-			for(var i=0;i<places.length;i++){
-			    $(nowActiveTab).append('<li class="list-group-item">' + places[i].address + '</li>');
+			for(var i=0;i<days[nowActiveIdx].length;i++){
+			    $(nowActiveTab).append('<li class="list-group-item">' + days[nowActiveIdx][i].address + '</li>');
 			}
 		}
 		
@@ -155,31 +175,79 @@
             }
        }).on('changeDate', function(ev) {
        		checkout.hide();
-       		var days = (checkout.date - checkin.date) / 86400000;
-       		makeDaysTab(days);
-       		$('#title').append('(' + days + '일)');
+       		var totalDays = (checkout.date - checkin.date) / 86400000;
+       		makeDaysTab(totalDays);
+       		$('#title').append('(' + totalDays + '일)');
        }).data('datepicker');
     });
 	
-	function makeDaysTab(days){
+	function makeDaysTab(totalDays){
 		$('#myTab').empty();
-		for(var i=1;i<=days;i++){
+		for(var i=1;i<=totalDays;i++){
 			if(i === 1){
-				$('#myTab').append('<li class="active"><a href="#day' + i + '">' + i + '</a></li>');
+				$('#myTab').append('<li class="active"><a href="#day' + i + '" index="' + (parseInt(i) - 1) + '">' + i + '</a></li>');
 				$('.tab-content').append('<div class="tab-pane active" id="day' + i + '"></div>');
 			} else {
-				$('#myTab').append('<li><a href="#day' + i + '">' + i + '</a></li>');
+				$('#myTab').append('<li><a href="#day' + i + '" index="' + (parseInt(i) - 1) + '">' + i + '</a></li>');
 				$('.tab-content').append('<div class="tab-pane" id="day' + i + '"></div>');
 			}
+			days[i-1] = new Array();
 		}
 		$('#myTab a').click(function (e) {
 			e.preventDefault();
+			//클릭된 탭이 보이도록하기
 			$(this).tab('show');
+			
+			//현재 보는 탭을 저장
 			nowActiveTab = $(this).attr('href');
+			nowActiveIdx = $(this).attr('index');
+			//맵에서 모든 마커를 지우고 해당 탭의 마커로 다시그리기
+			refreshMarkerList();
+			//현재 보고있는 맵의 위치를 해당 탭 포인트가 있는곳으로 이동 시킴
+			if(days[nowActiveIdx].length>0){
+				ChangeMapCenterZoom(days[nowActiveIdx]);
+			}
 		});
-		if(days > 0){
+		if(totalDays > 0){
 			nowActiveTab = '#day1';
+			nowActiveIdx = '0';
 		}
+	}
+	
+	function ChangeMapCenterZoom(places){
+		var Top = places[0].lat;
+		var bottom = places[0].lat;
+		var left = places[0].lng;
+		var right = places[0].lng;
+		//var newLat, newLng, LatVolume, LngVolume;
+		
+		for(var i=0;i<places.length;i++){
+			if(places[i].lat > Top){
+				top = places[i].lat;
+			}
+			if(places[i].lat < bottom){
+				bottom = places[i].lat;
+			}
+
+			if(places[i].lng < left){
+				left = places[i].lng;
+			}
+			if(places[i].lng > right){
+				right = places[i].lng;
+			}
+		}
+		
+		//LatVolume = Math.abs(Top-bottom);
+		//LngVolume = Math.abs(right-left);
+		//if(LatVolume<100 && LngVolume<100){
+			var bounds = new google.maps.LatLngBounds(
+		             new google.maps.LatLng(Top, left),
+		             new google.maps.LatLng(bottom, right));
+		    map.fitBounds(bounds);
+		//} else {
+		//	map.setCenter(new google.maps.LatLng(places[0].lat, places[0].lng));
+		//	map.setZoom(7);
+		//}
 	}
 	
 </script>
