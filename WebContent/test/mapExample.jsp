@@ -21,11 +21,14 @@
 	<script type="text/javascript" src="../js/bootstrap.min.js"></script>
 	<script type ="text/javascript" src ="../js/bootstrap-datepicker.js"></script>
 	<script type="text/javascript">
-		var map;
+		var map;places
 		var geocoder;
+		var days = new Array();
 		var places = new Array();
+		var nowActiveTab;
 		
-		function placeInfo(lat,lng,address,name,type,marker){
+		function placeInfo(day,lat,lng,address,name,type,marker){
+			this.day = day;
 			this.lat = lat;	//latitude
 			this.lng = lng;	//longitude
 			this.address = address;
@@ -62,12 +65,12 @@
 			var lng = location.lng();
 			var realAddress = getRealAddress(lat, lng, function(result){
 				if(result === null ||typeof result === 'undefined'){
-				    $('#placeList').append('<li class="list-group-item">(' + lat.toFixed(2) + ',' + lng.toFixed(2) + ')</li>');
+				    $(nowActiveTab).append('<li class="list-group-item">(' + lat.toFixed(2) + ',' + lng.toFixed(2) + ')</li>');
 				} else {
-				    $('#placeList').append('<li class="list-group-item">' + result + '</li>');
+				    $(nowActiveTab).append('<li class="list-group-item">' + result + '</li>');
 				}
 				//push place information to array
-				places.push(new placeInfo(location.lat(), location.lng(),result,'','',placeMarker(location)));
+				places.push(new placeInfo(nowActiveTab, location.lat(), location.lng(),result,'','',placeMarker(location)));
 			}, function(result){
 				alert('failed to get address' + result);
 			});
@@ -99,7 +102,7 @@
 				title: 'Click for detail'
 			});
 			google.maps.event.addListener(marker, 'click', function(){
-				deletePlace(marker)
+				//deletePlace(marker)
 			});
 			return marker;
 		}
@@ -119,10 +122,10 @@
 			for(var i=0;i<places.length;i++){
 				places[i].marker.setIcon('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + (parseInt(i) + 1) + '|FE6256|000000');
 			}
-			$('#placeList').empty();
+			$(nowActiveTab).empty();
 			
 			for(var i=0;i<places.length;i++){
-			    $('#placeList').append('<li class="list-group-item">' + places[i].address + '</li>');
+			    $(nowActiveTab).append('<li class="list-group-item">' + places[i].address + '</li>');
 			}
 		}
 		
@@ -152,21 +155,45 @@
             }
        }).on('changeDate', function(ev) {
        		checkout.hide();
-       		alert((checkout.date - checkin.date) / 86400000);
+       		var days = (checkout.date - checkin.date) / 86400000;
+       		makeDaysTab(days);
+       		$('#title').append('(' + days + '일)');
        }).data('datepicker');
     });
 	
+	function makeDaysTab(days){
+		$('#myTab').empty();
+		for(var i=1;i<=days;i++){
+			if(i === 1){
+				$('#myTab').append('<li class="active"><a href="#day' + i + '">' + i + '</a></li>');
+				$('.tab-content').append('<div class="tab-pane active" id="day' + i + '"></div>');
+			} else {
+				$('#myTab').append('<li><a href="#day' + i + '">' + i + '</a></li>');
+				$('.tab-content').append('<div class="tab-pane" id="day' + i + '"></div>');
+			}
+		}
+		$('#myTab a').click(function (e) {
+			e.preventDefault();
+			$(this).tab('show');
+			nowActiveTab = $(this).attr('href');
+		});
+		if(days > 0){
+			nowActiveTab = '#day1';
+		}
+	}
 	
 </script>
 	</head>
 	<body onload="initialize()">    		
-		<h2>여행을 시작할 날짜와 끝낼 날짜를 입력하세요.</h2>
+		<h2 id="title">여행을 시작할 날짜와 끝낼 날짜를 입력하세요.</h2>
     	<p><input type ="text" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id="start_date"></p>
     	<p><input type ="text" class = "form-control"data-date-format="yyyy-mm-dd" placeholder="마지막 날짜" id="end_date"></p>
-		<div id="map_canvas" style="width: 940px; height: 540px"></div>
+		<div id="map_canvas" style="width: 940px; height: 540px;"></div>
 		<div class="leftContent">
-			<ul id="placeList" class="list-group">
+			<ul class="nav nav-tabs" id="myTab">
 			</ul>
+			<div class="tab-content">
+			</div>
 		</div>
 	</body>
 </html>
