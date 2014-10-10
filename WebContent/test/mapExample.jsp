@@ -11,6 +11,7 @@
 		#map_canvas {display:inline-block;}
 		.leftContent {background: lightgray; height:540px; width: 500px; top:0px; display:inline-block; overflow: auto;}
 		.placeListItem {}
+		.onMap{position:absolute;left:840px;top:200px;}
 	</style>
 	<link href="../css/bootstrap.min.css" rel="stylesheet">
 	<link href ="../css/datepicker.css" rel="stylesheet">
@@ -26,6 +27,7 @@
 		
 		//날들을 저장함 (2차원배열)
 		var days = new Array();
+		var landmarks = new Array();
 		
 		//현재 선택된 탭과 그 날짜가 뭔지 저장하는 상태함수
 		var nowActiveTab;
@@ -120,6 +122,20 @@
 			return marker;
 		}
 		
+		function placeLandMarker(lat,lng,name){
+			var marker = new google.maps.Marker({
+				position: new google.maps.LatLng(lat, lng),
+				map: map,
+			    animation: google.maps.Animation.DROP,
+				icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+				title: name
+			});
+			//google.maps.event.addListener(marker, 'click', function(){
+			//	deletePlace(marker)
+			//});
+			return marker;
+		}
+		
 		function deletePlace(marker){
 			for(var i=0;i<days[nowActiveIdx].length;i++){
 				if(days[nowActiveIdx][i].marker === marker){
@@ -127,6 +143,12 @@
 					days[nowActiveIdx].splice(i,1);
 					refreshMarkerList();
 				}
+			}
+		}
+		
+		function removeAllLandmarker(){
+			for(var i=0;i<landmarks.length;i++){
+				landmarks[i].marker.setMap(null);
 			}
 		}
 		
@@ -179,6 +201,33 @@
        		makeDaysTab(totalDays);
        		$('#title').append('(' + totalDays + '일)');
        }).data('datepicker');
+       
+       $('#btnLandmarkShow').click(function(){
+    	  if($('#btnLandmarkShow').hasClass('active')){
+    		  //랜드마크에 대한 마커 다 지우기
+    		  removeAllLandmarker();
+	      }
+    	  else{
+    		  $.ajax({
+                  url: "/tripAlchemist/hello",
+                  type: "POST",
+                  //data: '{"VID" : "' + FindUrlVideoID(UrlInput) + '"}',
+                  contentType: "application/json",
+                  dataType: "JSON",
+                  timeout: 10000,
+                  success: function (result) {
+                	  $.each(result, function(index){
+                		  console.log(result[index]); 
+                		  console.log(index);              
+                		  landmarks.push(new placeInfo('', result[index].lat, result[index].lng,result[index].address,result[index].name,'1',placeLandMarker(result[index].lat, result[index].lng,result[index].name)));
+                	  });
+                  },
+                  error: function (result) {  
+            		  alert('failed to get landmarks');
+                  }
+              }); //ajax end
+    	  }
+       });
     });
 	
 	function makeDaysTab(totalDays){
@@ -256,7 +305,9 @@
 		<h2 id="title">여행을 시작할 날짜와 끝낼 날짜를 입력하세요.</h2>
     	<p><input type ="text" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id="start_date"></p>
     	<p><input type ="text" class = "form-control"data-date-format="yyyy-mm-dd" placeholder="마지막 날짜" id="end_date"></p>
-		<div id="map_canvas" style="width: 940px; height: 540px;"></div>
+		<div id="map_canvas" style="width: 940px; height: 540px;">
+		</div>
+		<div class="onMap"><a id="btnLandmarkShow" class="btn btn-primary" data-toggle="button">Landmarks</a></div>
 		<div class="leftContent">
 			<ul class="nav nav-tabs" id="myTab">
 			</ul>
