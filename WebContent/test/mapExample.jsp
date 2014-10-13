@@ -12,6 +12,7 @@
 		.leftContent {background: lightgray; height:540px; width: 500px; top:0px; display:inline-block; overflow: auto;}
 		.placeListItem {}
 		.onMap{position:absolute;left:840px;top:200px;}
+		.placeBalloon{width:80px;height:20px}
 	</style>
 	<link href="../css/bootstrap.min.css" rel="stylesheet">
 	<link href ="../css/datepicker.css" rel="stylesheet">
@@ -129,10 +130,23 @@
 			    animation: google.maps.Animation.DROP,
 				icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
 				title: name
+			});	        
+			
+			var balloon = '<div class="placeBalloon">' + name + '</div>';
+
+	        var infowindow = new google.maps.InfoWindow({
+	        	content: balloon,
+	        });
+
+			infowindow.open(map,marker);
+/* 			google.maps.event.addListener(marker, 'mouseover', function(){
+				infowindow.open(map,marker);
 			});
-			//google.maps.event.addListener(marker, 'click', function(){
-			//	deletePlace(marker)
-			//});
+
+			google.maps.event.addListener(marker, 'mouseout', function(){
+				infowindow.close(map,marker);
+			}); */
+			
 			return marker;
 		}
 		
@@ -216,9 +230,7 @@
                   dataType: "JSON",
                   timeout: 10000,
                   success: function (result) {
-                	  $.each(result, function(index){
-                		  console.log(result[index]); 
-                		  console.log(index);              
+                	  $.each(result, function(index){   
                 		  landmarks.push(new placeInfo('', result[index].lat, result[index].lng,result[index].address,result[index].name,'1',placeLandMarker(result[index].lat, result[index].lng,result[index].name)));
                 	  });
                   },
