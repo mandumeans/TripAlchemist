@@ -19,6 +19,7 @@
 	<script type="text/javascript" 
 			src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-EDvVM7eLhn0JWHezI7x2eGmAhre2BjE&sensor=FALSE">
 	</script>
+	<link href ="../css/index.css" rel ="stylesheet">
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script type="text/javascript" src="../js/bootstrap.min.js"></script>
 	<script type ="text/javascript" src ="../js/bootstrap-datepicker.js"></script>
@@ -313,7 +314,10 @@
 	
 </script>
 	</head>
-	<body onload="initialize()">    		
+	<body onload="initialize()">  
+	<jsp:include page="../jsp/top.jsp" flush="false">
+        <jsp:param name="param" value="top"/>
+	</jsp:include>	  		
 		<h2 id="title">여행을 시작할 날짜와 끝낼 날짜를 입력하세요.</h2>
     	<p><input type ="text" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id="start_date"></p>
     	<p><input type ="text" class = "form-control"data-date-format="yyyy-mm-dd" placeholder="마지막 날짜" id="end_date"></p>

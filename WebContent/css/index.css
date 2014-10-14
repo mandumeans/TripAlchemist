@@ -2,13 +2,18 @@
 
 
 body {
-  padding-top: 20px;
-  padding-bottom: 40px;
-  background: url('./image/index1.JPG') no-repeat center center fixed;
+  padding-top: 20px; 
+}
+.login-image{
+		background: url('../image/index1.JPG') no-repeat center center fixed;
         -webkit-background-size: cover;
         -moz-background-size: cover;
         -o-background-size: cover;
         background-size: cover;
+       
+}
+.back{
+	 background-color: #e7e7e7
 }
 h1{
 	color : white;
@@ -70,4 +75,22 @@ h2{
 	color:white;
 	text-align:center;
 	
+}
+.nav-font{
+		font-size : 17px;
+		font-weight : bold;		
+}
+.nav-arr{
+	margin-left: 300px;
+}
+.nav-array{
+	margin-right:300px;
+}
+.arr{
+	margin-left : 370px;
+	width:400px;
+	height:80px;
+}
+.form-arr{
+	margin-top:100px;
 }
