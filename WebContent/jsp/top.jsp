@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import ="java.sql.*" %>
-
+ <%@ page import ="com.ta.web.DBConnector" %>
 <%
 	int error =0;
 	try {
@@ -10,7 +10,6 @@
 	}
 	if(error!=0){
 		try{
-			Class.forName("com.mysql.jdbc.Driver");
 			out.println("<script>alert('아이디 또는 패스워트를 확인하세요.');</script>");
 		}catch(Exception e){
 		}
@@ -31,13 +30,7 @@
 			
 		try{
 				
-			String DB_SERVER ="localhost:3306";
-			String DB_SERVER_USERNAME="cap";
-			String DB_SERVER_PASSWORD ="test";
-			String DB_URL = "jdbc:mysql://localhost:3306/tripalchemist";
-			Class.forName("com.mysql.jdbc.Driver");
-				
-			con = DriverManager.getConnection(DB_URL, DB_SERVER_USERNAME, DB_SERVER_PASSWORD);
+			con = DBConnector.makeConnection();
 			
 			stmt = con.prepareStatement("SELECT *FROM user WHERE email = ?");
 			stmt.setString(1,email);
@@ -93,7 +86,7 @@
                				<span class="icon-bar"></span>
                			</button>
                			<div class ="nav-arr">
-               				<a class="navbar-brand" href="#">TripAlchemist</a>
+               				<a class="navbar-brand" href="index.jsp">TripAlchemist</a>
                			</div>
             		</div>
             		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -104,7 +97,7 @@
                   				<li class= "active">
                   					<% if(session.getAttribute("userName")==null){ %>
                   					<a href="#myModal" data-toggle="modal" data-target="#myModal">내 일정 만들기</a>
-                  					<%}else{ %> <a href ="../jsp/search.jsp">내 일정 만들기</a>
+                  					<%}else{ %> <a href ="../test/mapExample.jsp">내 일정 만들기</a>
                   					<%} %>
                   				</li>                  		
                				</ul>               		

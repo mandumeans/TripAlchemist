@@ -19,6 +19,17 @@
 	<servlet-name>HelloServlet</servlet-name>
 	<servlet-class>com.ta.web.HelloServlet</servlet-class>
 	</servlet>
+	
+	<servlet-mapping>
+	<servlet-name>Register</servlet-name>
+	<url-pattern>/register</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+	<servlet-name>Register</servlet-name>
+	<servlet-class>com.ta.web.Register</servlet-class>
+	</servlet>
+	
 	<resource-ref>
 		<description>DB Connection</description>
 		<res-ref-name>jdbc/tripalchemist</res-ref-name>

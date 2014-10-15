@@ -27,7 +27,7 @@
 		stmt.setString(3, password);
 		
 		
-		stmt.executeUpdate();
+		//stmt.executeUpdate();
 		
 	}catch(Exception e){                                                    // 예외가 발생하면 예외 상황을 처리한다.
 		e.printStackTrace();
@@ -70,7 +70,7 @@
       			<h1 class="form-signin-heading">TripAlchemist</h1>
 				<input type="text" name ="search" class="form-control" placeholder="지역을 입력해주세요.">
       		</form>			
-      		<form name = "form" class="form-signin" action="index.jsp" method ="post">  	
+      		<form name = "form" class="form-signin" action="/tripAlchemist/register" method ="post">  	
         		<input type="email" name ="email" class="form-control" placeholder="이메일" autofocus required>
         		<input type="text" name ="name" class="form-control" placeholder ="사용자 이름" required>        		
         		<input type="password" name ="password" class="form-control" placeholder="비밀번호" required>        		        			
