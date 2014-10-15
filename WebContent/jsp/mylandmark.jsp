@@ -26,7 +26,14 @@
 			 		<li><a href ="modify.jsp">개인 정보 수정</a></li>
 				</ul>	
 				<div>
-					
+				<p></p><br>
+					<div class="row">
+            	<div class="col-md-4 portfolio-item">
+                	<a href="#project-link">
+                    	<img class="img-responsive" src="../image/3.JPG">
+                	</a>
+            	</div>
+            	</div>
 				</div>        
 			</div>
 		</div>

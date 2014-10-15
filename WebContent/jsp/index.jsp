@@ -1,34 +1,31 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
  <%@ page import ="java.sql.*" %>
+ <%@ page import ="com.ta.web.DBConnector" %>
 <%
 	Connection conn = null;
 	PreparedStatement stmt = null;
 	ResultSet rs = null;
+	
 	try{
-		String url ="jdbc:mysql://localhost:3306/tripalchemist";
-		String user = "cap";
-		String pwd = "test";
 		
-		Class.forName("com.mysql.jdbc.Driver");
-		conn = DriverManager.getConnection(url,user,pwd);
+		//conn = DriverManager.getConnection(url,user,pwd);
+		conn = DBConnector.makeConnection();
 		
 		request.setCharacterEncoding("utf-8");
 		
 		String email = request.getParameter("email");
 		String name = request.getParameter("name");
 		String password = request.getParameter("password");
-		String DOB = request.getParameter("DOB");
-		String gender = request.getParameter("gender");
 		
-		String sql ="insert into user values(?,?,?,?,?)";
+		
+		String sql ="insert into user values(?,?,?)";
 		stmt = conn.prepareStatement(sql);
 		
-		stmt.setString(1, name);
-		stmt.setString(2, email);
+		stmt.setString(1, email);
+		stmt.setString(2, name);
 		stmt.setString(3, password);
-		stmt.setString(4, DOB);
-		stmt.setString(5, gender);
+		
 		
 		stmt.executeUpdate();
 		
@@ -49,12 +46,20 @@
  <link href="../css/bootstrap.css" rel="stylesheet">
  <link href="../css/index.css" rel="stylesheet">
  <link href="../css/nav.css" rel="stylesheet">
+ <link href ="../css/datepicker.css" rel ="stylesheet">
  <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
  <script type="text/javascript" src="../js/bootstrap.min.js"></script>
- <script type ="text/javascript" src ="../js/jquery-birthday-picker.min.js"></script> 
-
+ <script type ="text/javascript" src ="../js/bootstrap-datepicker.js"></script> 
+<script type ="text/javascript">
+	$(document).ready(function(){
+		$('#example1').datepicker({
+			format:"yyyy-mm-dd"
+		});
+	});
+</script>
 </head>
 <body>
+
 	<jsp:include page="top.jsp" flush="false">
         <jsp:param name="param" value="top"/>
 	</jsp:include>	
@@ -66,16 +71,14 @@
 				<input type="text" name ="search" class="form-control" placeholder="지역을 입력해주세요.">
       		</form>			
       		<form name = "form" class="form-signin" action="index.jsp" method ="post">  	
-        		email : <input type="email" name ="email" class="form-control" placeholder="이메일" required>
-        		name : <input type="text" name ="name" class="form-control" placeholder ="사용자 이름" autofocus required>        		
-        		password :<input type="password" name ="password" class="form-control" placeholder="비밀번호" required>        		        			
-				<div id="default-settings"></div>
-				<script>
-					$("#default-settings").birthdayPicker();											
-				</script>	
-        		<p></p>
-        		성별 : <input type ="radio" name ="gender" class ="radio-inline" value="option1" required> 남성
-        		<input type ="radio" name ="gender" class ="radio-inline" value="option2" required> 여성
+        		<input type="email" name ="email" class="form-control" placeholder="이메일" autofocus required>
+        		<input type="text" name ="name" class="form-control" placeholder ="사용자 이름" required>        		
+        		<input type="password" name ="password" class="form-control" placeholder="비밀번호" required>        		        			
+				<input type ="text" name ="DOB" class ="form-control" id ="example1" placeholder ="click to show calendar" required>
+        		<select class ="form-control" name ="gender" required>
+        				<option>M</option>
+        				<option>F</option>
+        		</select>
         		<p></p>
         		<button type = "submit" class="btn btn-lg btn-primary btn-block">가입</button>
       		</form>
@@ -90,6 +93,10 @@
       		<%} %> 
     	</div>
     </div>
+    
+    
+    
+    
     <div class="container">
     	<div class="row">			
             <div class="col-lg-12">
@@ -101,6 +108,7 @@
     	<div>   	
      		<div class="row">
             	<div class="col-md-4 portfolio-item">
+                	
                 	<a href="#project-link">
                     	<img class="img-responsive" src="http://placehold.it/700x400">
                 	</a>
@@ -111,8 +119,8 @@
                 	<a href="#project-link">
                     	<img class="img-responsive" src="http://placehold.it/700x400">
                 	</a>
-                	<h3><a href="#project-link">여행 일정</a></h3>
-                	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
+               		<h3><a href="#project-link">여행 일정</a></h3>
+                	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>                
             	</div>
             	<div class="col-md-4 portfolio-item">
                 	<a href="#project-link">
@@ -136,8 +144,8 @@
                 	<a href="#project-link">
                     	<img class="img-responsive" src="http://placehold.it/700x400">
                 	</a>
-                	<h3><a href="#project-link">여행 일정</a></h3>
-                	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
+               		<h3><a href="#project-link">여행 일정</a></h3>
+                	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>                
             	</div>
             	<div class="col-md-4 portfolio-item">
                 	<a href="#project-link">

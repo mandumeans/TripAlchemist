@@ -26,11 +26,44 @@
 			 		<li><a href ="modify.jsp">내 정보</a></li>
 				</ul>	
 				<div>
-					
-				</div>        
+					<p></p><br>
+					<div class="row">
+            	<div class="col-md-4 portfolio-item">
+                	<a href="#project-link">
+                    	<img class="img-responsive" src="../image/1.JPG">
+                	</a>
+            	</div>
+            	<div class="col-md-4 portfolio-item">
+                	<a href="#project-link">
+                    	<img class="img-responsive" src="../image/2.JPG">
+                	</a>
+            	</div>
+            	<div class="col-md-4 portfolio-item">
+                	<a href="#project-link">
+                    	<img class="img-responsive" src="../image/2.JPG">
+                	</a>
+            	</div>
+				</div>
+				<p></p><br>
+				<div class="row">
+            	
+            	<div class="col-md-4 portfolio-item">
+                	<a href="#project-link">
+                    	<img class="img-responsive" src="../image/2.JPG">
+                	</a>
+            	</div>
+            	<div class="col-md-4 portfolio-item">
+                	<a href="#project-link">
+                    	<img class="img-responsive" src="../image/2.JPG">
+                	</a>
+            	</div>
+				</div>         
 			</div>
 		</div>
     </div>
-
+</div>
+<jsp:include page="footer.jsp" flush="false">
+        <jsp:param name="param" value="footer"/>
+</jsp:include>
 </body>
 </html>
