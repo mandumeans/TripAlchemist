@@ -21,6 +21,7 @@
 	</servlet>
 	
 	<servlet-mapping>
+<<<<<<< HEAD
 	<servlet-name>RecommandServlet</servlet-name>
 	<url-pattern>/recommand</url-pattern>
 	</servlet-mapping>
@@ -28,6 +29,15 @@
 	<servlet>
 	<servlet-name>RecommandServlet</servlet-name>
 	<servlet-class>com.ta.web.RecommandServlet</servlet-class>
+=======
+	<servlet-name>Register</servlet-name>
+	<url-pattern>/register</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+	<servlet-name>Register</servlet-name>
+	<servlet-class>com.ta.web.Register</servlet-class>
+>>>>>>> c215be392b36a6c5d8ddb65eb688f5d9940f9642
 	</servlet>
 	
 	<resource-ref>

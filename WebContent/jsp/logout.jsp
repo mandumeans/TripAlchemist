@@ -4,11 +4,8 @@
 <html lang="ko">
 <head>
 	<meta charset="UTF-8">
-	<title>Insert title here</title>
-	<link href="bootstrap.min.css" rel="stylesheet">
-	<link href="index.css" rel="stylesheet">
-	<script type="text/javascript" src="jquery-1.11.1.min.js"></script>
-	<script type="text/javascript" src="bootstrap.min.js"></script>
+	<title>logout</title>
+	
 </head>
 <body>
 	<%
