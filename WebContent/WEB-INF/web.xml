@@ -19,6 +19,17 @@
 	<servlet-name>HelloServlet</servlet-name>
 	<servlet-class>com.ta.web.HelloServlet</servlet-class>
 	</servlet>
+	
+	<servlet-mapping>
+	<servlet-name>RecommandServlet</servlet-name>
+	<url-pattern>/recommand</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+	<servlet-name>RecommandServlet</servlet-name>
+	<servlet-class>com.ta.web.RecommandServlet</servlet-class>
+	</servlet>
+	
 	<resource-ref>
 		<description>DB Connection</description>
 		<res-ref-name>jdbc/tripalchemist</res-ref-name>

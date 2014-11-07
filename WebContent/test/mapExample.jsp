@@ -13,6 +13,7 @@
 		.placeListItem {}
 		.onMap{position:absolute;left:840px;top:200px;}
 		.placeBalloon{width:80px;height:20px}
+		#btnHotelRecommand{position:absolute;top:40px;right:0.5px;}
 	</style>
 	<link href="../css/bootstrap.min.css" rel="stylesheet">
 	<link href ="../css/datepicker.css" rel="stylesheet">
@@ -240,6 +241,43 @@
               }); //ajax end
     	  }
        });
+
+       $('#btnHotelRecommand').click(function(){
+    	   //탭이 존재 하는지 확인
+    	   if($('#myTab').find('li').length <= 0) {
+    		   alert('Please choose places to go first');
+    		   return;
+    	   }
+    	   //액티브된 탭에 일정이 한개 이상 존재하는 지 확인
+    	   if($('div.tab-pane.active').find('li').length <= 0) {
+    		   alert('Please choose places to go first!');
+    		   return;
+    	   }
+    	   
+    	   var lat = days[nowActiveIdx][days[nowActiveIdx].length - 1].lat;
+    	   var lng = days[nowActiveIdx][days[nowActiveIdx].length - 1].lng;
+    	   console.log('{"lat" : "' + lat + '", "lng" : "' + lat + '"}');
+    	   
+    	   //ajax로 추천된 데이터들 콜백함수를 통해 뿌려줌
+    		  $.ajax({
+                  url: "/tripAlchemist/recommand",
+                  type: "POST",
+                  data: '{"lat" : "' + lat + '", "lng" : "' + lat + '"}',
+                  contentType: "application/json",
+  				  dataType: "JSON",
+                  timeout: 10000,
+                  success: function (result) {
+                	  $.each(result, function(index){   
+                		  landmarks.push(new placeInfo('', result[index].lat, result[index].lng,result[index].address,result[index].name,'1',placeLandMarker(result[index].lat, result[index].lng,result[index].name)));
+                	  });
+                  },
+                  error: function (result) {  
+            		  alert('failed to get landmarks');
+                  }
+              }); //ajax end
+       });
+       
+       
     });
 	
 	function makeDaysTab(totalDays){
@@ -319,7 +357,10 @@
     	<p><input type ="text" class = "form-control"data-date-format="yyyy-mm-dd" placeholder="마지막 날짜" id="end_date"></p>
 		<div id="map_canvas" style="width: 940px; height: 540px;">
 		</div>
-		<div class="onMap"><a id="btnLandmarkShow" class="btn btn-primary" data-toggle="button">Landmarks</a></div>
+		<div class="onMap">
+			<a id="btnLandmarkShow" class="btn btn-primary" data-toggle="button">Landmarks</a></br></br>
+			<a id="btnHotelRecommand" class="btn btn-primary">Recommand</br>Hotel</a>
+		</div>
 		<div class="leftContent">
 			<ul class="nav nav-tabs" id="myTab">
 			</ul>
