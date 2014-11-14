@@ -256,7 +256,6 @@
     	   }
     	   var lat = days[nowActiveIdx][days[nowActiveIdx].length - 1].lat;
     	   var lng = days[nowActiveIdx][days[nowActiveIdx].length - 1].lng;
-    	   var date = 
     	   var location = {"lat" : lat , "lng" : lng};
     	   //ajax로 추천된 데이터들 콜백함수를 통해 뿌려줌
     		  $.ajax({
