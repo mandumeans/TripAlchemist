@@ -38,6 +38,7 @@ public class RecommandServlet extends HttpServlet {
 		float lng = 126.992038F;
 		String latitude = req.getParameter("lat");
 		String longitude = req.getParameter("lng");
+		String theDay = req.getParameter("theDay");//	YYYY/MM/DD format
 		try{
 		lat = Float.parseFloat(latitude);
 		lng = Float.parseFloat(longitude);
@@ -47,12 +48,13 @@ public class RecommandServlet extends HttpServlet {
         Connection conn = null;
         CallableStatement cStmt = null;
         ResultSet rs = null;
-        
+     
         try{
         	conn = DBConnector.makeConnection();
-            cStmt = conn.prepareCall("{call hotelRecommendation(?, ?)}");
+            cStmt = conn.prepareCall("{call hotelRecommendation(?, ?, ?)}");
             cStmt.setFloat(1, lat);
             cStmt.setFloat(2, lng);
+            cStmt.setString(3, theDay);
             boolean result = cStmt.execute();
 			PrintWriter out = resp.getWriter();
 			JSONArray ja = new JSONArray();

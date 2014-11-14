@@ -256,7 +256,13 @@
     	   }
     	   var lat = days[nowActiveIdx][days[nowActiveIdx].length - 1].lat;
     	   var lng = days[nowActiveIdx][days[nowActiveIdx].length - 1].lng;
-    	   var location = {"lat" : lat , "lng" : lng};
+    	   
+    	   var startDate = checkin.date;
+    	   var DateToGo = new Date();
+    	   DateToGo.setDate(startDate.getDate() + Number(nowActiveIdx));
+    	   var location = {"lat" : lat , "lng" : lng, 'theDay' : yyyymmdd(DateToGo)};
+    	   
+    	   console.log(location);
     	   //ajax로 추천된 데이터들 콜백함수를 통해 뿌려줌
     		  $.ajax({
                   url: "/tripAlchemist/recommand",
@@ -279,6 +285,12 @@
        
        
     });
+	function yyyymmdd(dateIn) {
+		   var yyyy = dateIn.getFullYear();
+		   var mm = dateIn.getMonth(); // getMonth() is zero-based
+		   var dd  = dateIn.getDate();
+		   return String(yyyy + '/' + mm + '/' + dd); // Leading zeros for mm and dd
+	}
 	
 	function makeDaysTab(totalDays){
 		$('#myTab').empty();

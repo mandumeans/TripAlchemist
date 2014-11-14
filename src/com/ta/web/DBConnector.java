@@ -16,8 +16,8 @@ public class DBConnector {
 		//DataSource ds = (DataSource)envCtx.lookup("jdbc/tripalchemist");
 		//return ds.getConnection();
 		Class.forName("com.mysql.jdbc.Driver");
-		String DB_SERVER = "localhost:3306";//자신의 DB 포트
-		String DB_SERVER_USERNAME = "cat";//자신의 DB아이디
+		String DB_SERVER = "192.186.223.97:3306";//자신의 DB 포트
+		String DB_SERVER_USERNAME = "ta";//자신의 DB아이디
 		String DB_SERVER_PASSWORD = "test";//자신의 DB비밀번호
 		//String DB_DATABASE = "data";//DB내에 존재하는 database
 		String DB_DATABASE = "tripalchemist";//DB내에 존재하는 database
