@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 import com.ta.web.DBConnector;
 
 public class Register extends HttpServlet {
@@ -31,10 +30,14 @@ public class Register extends HttpServlet {
 		resp.setContentType("text/plain;charset=UTF-8");
         Connection conn = null;
         PreparedStatement stmt = null;
+    
         
         try{
+        	
         	conn = DBConnector.makeConnection();
-            String query = "INSERT INTO user(`email`,`name`,`password`,`DOB`,`gender`,`auth`,`createdat`,`modifydat`) VALUES(?,?,?,?,'M','0',NOW(),NOW());";
+        	req.setCharacterEncoding("utf-8");
+        	
+            String query = "INSERT INTO user(`email`,`name`,`password`,`DOB`,`gender`,`auth`,`createdat`,`modifydat`) VALUES(?,?,?,?,?,'0',NOW(),NOW());";
             
         	stmt = conn.prepareStatement(query);
             
@@ -42,21 +45,23 @@ public class Register extends HttpServlet {
 			String email = req.getParameter("email");
 			String name = req.getParameter("name");
 			String pw = req.getParameter("password");
-			String dob = req.getParameter("dob");
-			//String gender = req.getParameter("gender");
+			String DOB = req.getParameter("DOB");
+			String gender = req.getParameter("gender");
         	
 			stmt.setString(1, email);
 			stmt.setString(2, name);
 			stmt.setString(3, pw);
-			stmt.setString(4, dob);
-        	//stmt.setString(5, gender);
+			stmt.setString(4, DOB);
+        	stmt.setString(5, gender);
         	
         	stmt.executeUpdate();
             
             
     		PrintWriter out = resp.getWriter();
     		
-            resp.sendRedirect("./jsp/index.jsp");
+            resp.sendRedirect("./jsp/main.jsp");
+            
+           
             out.flush();
             out.close();    
         } catch(SQLException e){
@@ -66,6 +71,9 @@ public class Register extends HttpServlet {
 		} catch (NamingException e) {
 			e.printStackTrace();
 		}
+        
     }
+	
+
 	
 }

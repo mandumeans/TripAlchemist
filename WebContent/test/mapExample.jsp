@@ -315,10 +315,8 @@
 </script>
 	</head>
 	<body onload="initialize()">  
-	<jsp:include page="../jsp/top.jsp" flush="false">
-        <jsp:param name="param" value="top"/>
-	</jsp:include>	  		
-		<h2 id="title">여행을 시작할 날짜와 끝낼 날짜를 입력하세요.</h2>
+	  		
+		<h4 id="title">여행을 시작할 날짜와 끝낼 날짜를 입력하세요.</h4>
     	<p><input type ="text" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id="start_date"></p>
     	<p><input type ="text" class = "form-control"data-date-format="yyyy-mm-dd" placeholder="마지막 날짜" id="end_date"></p>
 		<div id="map_canvas" style="width: 940px; height: 540px;">
