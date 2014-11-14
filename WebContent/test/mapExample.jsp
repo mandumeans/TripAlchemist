@@ -254,23 +254,23 @@
     		   alert('Please choose places to go first!');
     		   return;
     	   }
-    	   
     	   var lat = days[nowActiveIdx][days[nowActiveIdx].length - 1].lat;
     	   var lng = days[nowActiveIdx][days[nowActiveIdx].length - 1].lng;
-    	   console.log('{"lat" : "' + lat + '", "lng" : "' + lat + '"}');
-    	   
+    	   var date = 
+    	   var location = {"lat" : lat , "lng" : lng};
     	   //ajax로 추천된 데이터들 콜백함수를 통해 뿌려줌
     		  $.ajax({
                   url: "/tripAlchemist/recommand",
-                  type: "POST",
-                  data: '{"lat" : "' + lat + '", "lng" : "' + lat + '"}',
+                  type: "GET",
+                  data: location,
+                  dataType : "json",
                   contentType: "application/json",
-  				  dataType: "JSON",
                   timeout: 10000,
                   success: function (result) {
-                	  $.each(result, function(index){   
-                		  landmarks.push(new placeInfo('', result[index].lat, result[index].lng,result[index].address,result[index].name,'1',placeLandMarker(result[index].lat, result[index].lng,result[index].name)));
-                	  });
+                	  console.log(result);
+//                 	  $.each(result, function(index){   
+//                 		  landmarks.push(new placeInfo('', result[index].lat, result[index].lng,result[index].address,result[index].name,'1',placeLandMarker(result[index].lat, result[index].lng,result[index].name)));
+//                 	  });
                   },
                   error: function (result) {  
             		  alert('failed to get landmarks');
