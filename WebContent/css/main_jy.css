@@ -1,0 +1,43 @@
+.bnbwrap{
+	margin: 5px;
+}
+
+.bnblist{
+	width: 800px;
+	padding-bottom: 5px;
+	margin-bottom: 10px;
+	overflow: hidden;
+	border-bottom: 1px solid #ededed;
+}
+
+.bnblist .cell{
+	padding-right: 5px;
+	margin-right: 10px;
+	float: left;
+}
+
+.bnblist .last{
+	margin-right: 0;
+}
+
+.num{
+	text-align: center;
+	width: 20px;
+}
+
+.itemthumb{
+	width: 70px;
+	height: 70px;
+}
+
+.itemname{
+	width: 250px;
+}
+
+.itemadrs{
+	width: 250px;
+}
+
+.reserve{
+	width: 90px;
+}

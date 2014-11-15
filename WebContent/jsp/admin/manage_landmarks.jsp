@@ -8,7 +8,7 @@
 						<select>
 							<option value="name">Landmark Name</option>
 						</select>
-						<input type="text" name="searchbox" value />
+						<input type="text" name="searchbox" value="" />
 						<input type="button" name="search" value="Search" />
 					</p>
 				</form>

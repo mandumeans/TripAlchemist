@@ -9,7 +9,7 @@
 							<option value="name">User Name</option>
 							<option value="e-mail">E-mail</option>
 						</select>
-						<input type="text" name="searchbox" value />
+						<input type="text" name="searchbox" value="" />
 						<input type="button" name="search" value="Search" />
 					</p>
 				</form>
@@ -49,12 +49,47 @@
 						<th>E-mail</th>
 						<th>Gender</th>
 					</tr>
+<%
+	Connection conn = null;
+	PreparedStatement stmt = null;
+	ResultSet rs = null;
+	
+	out.println("before try.");
+
+	try{
+		conn = DBConnector.makeConnection();
+		
+		request.setCharacterEncoding("utf-8");                                // 쿼리를 실행하고 결과를 ResultSet 객체에 담는다.
+		
+//		stmt = conn.createStatement();
+		String sql ="select * from user";
+		stmt = conn.prepareStatement(sql);
+		
+		rs = stmt.executeQuery(sql);
+
+		while(rs.next()){                                                        // 결과를 한 행씩 돌아가면서 가져온다.
+			int i = 1;
+			String name = rs.getString("name");
+			String email = rs.getString("email");
+			String gender = rs.getString("gender");
+			Timestamp register = rs.getTimestamp("reg_date");
+%>		
 					<tr>
-						<td>1</td>
-						<td>test name</td>
-						<td>adsf.test.com</td>
-						<td>Male</td>
+						<td><%=i %></td>
+						<td><%=name %></td>
+						<td><%=email %></td>
+						<td><%=gender %></td>
 					</tr>
+<%
+		}
+	}catch(Exception e){                                                    // 예외가 발생하면 예외 상황을 처리한다.
+		e.printStackTrace();
+		out.println("There is no memeber.");
+		}finally{                                                            // 쿼리가 성공 또는 실패에 상관없이 사용한 자원을 해제 한다.  (순서중요)
+		if(rs != null) try{rs.close();}catch(SQLException sqle){}            // Resultset 객체 해제�
+		if(conn != null) try{conn.close();}catch(SQLException sqle){}   // Connection 해제
+		}
+%>
 					<tr>
 						<td>2</td>
 						<td>test name2</td>
