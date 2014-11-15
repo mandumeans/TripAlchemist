@@ -95,6 +95,9 @@ h2{
 	margin-top:100px;
 }
 .img-size{
-	
-	width : 350px;
+	height :200px;
+	width : 250px;
+}
+.table-sortable tbody tr {
+    cursor: move;
 }

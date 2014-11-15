@@ -7,6 +7,7 @@ import java.io.Console;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.util.Enumeration;
 
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
@@ -33,25 +34,27 @@ public class RecommandServlet extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	protected void process(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setContentType("application/json;charset=UTF-8");
-		float lat = 37.46831856835604F;
-		float lng = 37.46831856835604F;
+		float lat = 37.549852F;
+		float lng = 126.992038F;
 		String latitude = req.getParameter("lat");
 		String longitude = req.getParameter("lng");
+		String theDay = req.getParameter("theDay");//	YYYY/MM/DD format
 		try{
-		//lat = Float.parseFloat(latitude);
-		//lng = Float.parseFloat(longitude);
+		lat = Float.parseFloat(latitude);
+		lng = Float.parseFloat(longitude);
 		} catch(NullPointerException e){
 			e.printStackTrace();
 		}
         Connection conn = null;
         CallableStatement cStmt = null;
         ResultSet rs = null;
-        
+     
         try{
         	conn = DBConnector.makeConnection();
-            cStmt = conn.prepareCall("{call hotelRecommendation(?, ?)}");
+            cStmt = conn.prepareCall("{call hotelRecommendation(?, ?, ?)}");
             cStmt.setFloat(1, lat);
             cStmt.setFloat(2, lng);
+            cStmt.setString(3, theDay);
             boolean result = cStmt.execute();
 			PrintWriter out = resp.getWriter();
 			JSONArray ja = new JSONArray();
@@ -59,29 +62,23 @@ public class RecommandServlet extends HttpServlet {
             	rs = cStmt.getResultSet();
 				while (rs.next()) {
 					JSONObject obj = new JSONObject();
-					obj.put("name", rs.getString("name"));
-					obj.put("address", rs.getString("address"));
-					obj.put("lat", rs.getString("lat"));
-					obj.put("lng", rs.getString("lng"));
+					obj.put("rank", rs.getString("rankSum"));
+					obj.put("name", rs.getString("hotelName"));
+					obj.put("roomName", rs.getString("hotelRoomName"));
+					obj.put("price", rs.getString("hotelPrice"));
+					obj.put("rate", rs.getString("hotelRate"));
+					obj.put("address", rs.getString("hotelAddress"));
+					obj.put("lat", rs.getString("hotelLat"));
+					obj.put("lng", rs.getString("hotelLng"));
 					ja.add(obj);
 				}
             	
             	result = cStmt.getMoreResults();
             }
 
-//			PrintWriter out = resp.getWriter();
-//			JSONArray ja = new JSONArray();
-//			while (rs.next()) {
-//				JSONObject obj = new JSONObject();
-//				obj.put("name", rs.getString("name"));
-//				obj.put("address", rs.getString("address"));
-//				obj.put("lat", rs.getString("lat"));
-//				obj.put("lng", rs.getString("lng"));
-//				ja.add(obj);
-//			}
-//            out.print(ja);
-//            out.flush();
-//            out.close();    
+			out.print(ja);
+			out.flush();
+			out.close();
         } catch(SQLException e){
 			e.printStackTrace();
         } catch (ClassNotFoundException e) {
