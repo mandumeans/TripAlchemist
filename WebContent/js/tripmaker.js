@@ -350,4 +350,5 @@ function ChangeMapCenterZoom(places) {
 					right));
 	map.fitBounds(bounds);
 }
+
 //////////////TAB CONTROL END///////////////////////////
