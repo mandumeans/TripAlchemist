@@ -17,36 +17,14 @@
 
 <link href ="../css/datepicker.css" rel ="stylesheet">
 <script type ="text/javascript" src ="../js/bootstrap-datepicker.js"></script> 
- 
 <%MemberDTO memberDTO =(MemberDTO)session.getAttribute("member_info"); %>
-<script type="text/javascript">
-	$(document).ready(function () {
-		var nowTemp = new Date();
-		var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0); 
-        var checkin = $('#start_date').datepicker({
-        	onRender: function(date) {
-        	return date.valueOf() < now.valueOf() ? 'disabled' : '';
-            }
-        }).on('changeDate', function(ev) {
-        	if (ev.date.valueOf() > checkout.date.valueOf()) {
-            	var newDate = new Date(ev.date)
-                newDate.setDate(newDate.getDate() + 1);
-                checkout.setValue(newDate);
-            }
-            checkin.hide();
-            $('#end_date')[0].focus();
-       }).data('datepicker');
-       var checkout = $('#end_date').datepicker({
-       		onRender: function(date) {
-            return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
-            }
-       }).on('changeDate', function(ev) {
-       		checkout.hide();
-       		var totalDays = (checkout.date - checkin.date) / 86400000;
-       		makeDaysTab(totalDays);
-       		$('#title').append('(' + totalDays + '일)');
-       }).data('datepicker');
-</script>
+<script type ="text/javascript">
+	$(document).ready(function(){
+		$('#example2').datepicker({
+			format:"yyyy-mm-dd"
+		});
+	});
+</script> 
 </head>
 <body>
 <jsp:include page="navbar.jsp" flush="false">
@@ -78,7 +56,8 @@
 					<div class="tab-content">
 						<div class="tab-pane active" id="tab_default_1">
 	   						<div class ="container">
-	   							<div class ="row">	   	
+	   							<div class ="row">	
+	   								<br>   	
 	   								<div class ="col-lg-3 col-sm-6">
 	   								<a href="#myModal1" class="thumbnail" data-toggle="modal" data-target="#myModal1">
      									<img src="../image/jo.JPG" alt="...">
@@ -184,7 +163,7 @@
 												<tr>
 													<td class="text-center">생년월일</td>
 													<td data-name = "name">									
-														<input type="text" name="DOB" id ="example1" value ="<%=memberDTO.getDOB()%>" class="form-control">							
+														<input type="text" name="DOB" value ="<%=memberDTO.getDOB()%>" class="form-control">							
 													</td>
 												</tr>
 												<tr>
@@ -228,7 +207,7 @@
 					
         				<h4 id="title">여행을 시작할 날짜와 끝낼 날짜를 입력해주세요.</h4>
                     	<label class="sr-only"></label>
-                    	<input type ="text" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id="start_date">
+                    	<input type ="text" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id ="example2">
                     </div>     
                     <div class="form-group">
                         <label class="sr-only"></label>

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ta.web.DBConnector;
 
-public class Register extends HttpServlet {
+public class myschedule extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -37,7 +37,7 @@ public class Register extends HttpServlet {
         	conn = DBConnector.makeConnection();
         	req.setCharacterEncoding("utf-8");
         	
-            String query = "insert into user(`email`,`name`,`password`,`DOB`,`gender`,`auth`,`createdat`,`modifydat`) values(?,?,?,?,?,'0',NOW(),NOW());";
+            String query = "select *from tripmst where creatby ='홍길동'";
             
         	stmt = conn.prepareStatement(query);
             
