@@ -64,6 +64,9 @@ public class RecommandServlet extends HttpServlet {
 					JSONObject obj = new JSONObject();
 					obj.put("rank", rs.getString("rankSum"));
 					obj.put("name", rs.getString("hotelName"));
+					obj.put("roomName", rs.getString("hotelRoomName"));
+					obj.put("price", rs.getString("hotelPrice"));
+					obj.put("rate", rs.getString("hotelRate"));
 					obj.put("address", rs.getString("hotelAddress"));
 					obj.put("lat", rs.getString("hotelLat"));
 					obj.put("lng", rs.getString("hotelLng"));

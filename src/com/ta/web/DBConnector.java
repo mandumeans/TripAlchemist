@@ -21,7 +21,7 @@ public class DBConnector {
 		String DB_SERVER_PASSWORD = "test";//자신의 DB비밀번호
 		//String DB_DATABASE = "data";//DB내에 존재하는 database
 		String DB_DATABASE = "tripalchemist";//DB내에 존재하는 database
-		Connection c = DriverManager.getConnection("jdbc:mysql://"+DB_SERVER+"/"+DB_DATABASE+"?useUnicode=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8", DB_SERVER_USERNAME, DB_SERVER_PASSWORD);
+		Connection c = DriverManager.getConnection("jdbc:mysql://"+DB_SERVER+"/"+DB_DATABASE+"?noAccessToProcedureBodies=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8", DB_SERVER_USERNAME, DB_SERVER_PASSWORD);
 		return c;
 	}
 }
