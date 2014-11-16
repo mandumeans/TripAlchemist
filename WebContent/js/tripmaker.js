@@ -10,25 +10,15 @@ var nowActiveTab;
 var nowActiveIdx;
 
 // 명소들을 저장하기위한 구조체
-function placeInfo(day, lat, lng, address, name, type, hotelInfo, marker) {
+function placeInfo(day, lat, lng, address, name, type, marker) {
 	this.day = day;
 	this.lat = lat; // latitude
 	this.lng = lng; // longitude
 	this.address = address;
 	this.name = name;
-	this.type = type; // 1.landmark 2.food 3.accommodation 4.shopping
+	this.type = type; // 1.landmark 2.food 3.accomodation 4.shopping
 						// 5.entertaining 6.etc
-	this.hotelInfo = hotelInfo; //only for type 3(accommodation)
 	this.marker = marker;
-}
-
-//예약할 호텔 방의 정보를 저장하기 위한 구조체
-function hotelInfo(hotelNum, hotelRoomNum, hotelName, hotelRoomName, price) {
-	this.hotelNum = hotelNum;
-	this.hotelRoomNum = hotelRoomNum; 
-	this.hotelName = hotelName;
-	this.hotelRoomName = hotelRoomName; 
-	this.price = price;
 }
 
 // 교통정보를 저장하기 위한 구조체
@@ -70,7 +60,7 @@ function insertNewPlace(location) {
 
 		// days 2차원 배열에 현재 활성화된 날짜에 placeInfo구조체를 배열에 집어넣고 Marker도 찍는다.
 		days[nowActiveIdx].push(new placeInfo(nowActiveTab, location.lat(),
-				location.lng(), result, '', '', '', placeMarker(location)));
+				location.lng(), result, '', '', placeMarker(location)));
 	}, function(result) {
 		alert('failed to get address' + result);
 	});
@@ -162,13 +152,8 @@ function refreshMarkerList() {
 	$(nowActiveTab).empty();
 
 	for (var i = 0; i < days[nowActiveIdx].length; i++) {
-		var listItemLabel = days[nowActiveIdx][i].name;
-		if(listItemLabel === ''){
-			listItemLabel = days[nowActiveIdx][i].address;			
-		}
-		
 		$(nowActiveTab).append(
-				'<li class="list-group-item">' + listItemLabel
+				'<li class="list-group-item">' + days[nowActiveIdx][i].address
 						+ '</li>');
 	}
 }
@@ -233,7 +218,7 @@ $(document).ready(function() {
 								timeout : 10000,
 								success : function(result) {
 									$.each(result,function(index) {
-										landmarks.push(new placeInfo('',result[index].lat,result[index].lng,result[index].address,result[index].name,'1','',
+										landmarks.push(new placeInfo('',result[index].lat,result[index].lng,result[index].address,result[index].name,'1',
 												placeLandMarker(result[index].lat,result[index].lng,result[index].name)));
 									});
 								},
@@ -281,37 +266,6 @@ $(document).ready(function() {
 							timeout : 10000,
 							success : function(result) {
 								console.log(result);
-								$('#recomHotelList').empty();
-								$.each(result,function(index) {
-									var hotelNum = result[index].hotelNum;
-									var hotelRoomNum = result[index].hotelRoomNum;
-									var rank = result[index].rank;
-									var name = result[index].name;
-									var roomName = result[index].roomName;
-									var price = result[index].price;
-									var rate = result[index].rate;
-									var address = result[index].address;
-									var hotelLat = result[index].lat;
-									var hotelLng = result[index].lng;
-									var listKey = 'hn' + hotelNum + 'hrn' + hotelRoomNum;
-
-									$('#recomHotelList').append('<li><a id="' + listKey + '"> 호텔 : ' + name  + ' / 방 이름 : ' + roomName + ' / 가격 : ' + price + ' / 평점 : ' + rate + '  </a></li>');
-									
-
-									// click event시
-									//days[nowActiveIdx].push(new placeInfo(nowActiveTab, lat, lng, address, name, '3', new hotelInfo(hotelNum, hotelRoomNum, name, roomName, price), placeMarker(location)));
-									$('#' + listKey).click(function(e) {
-										days[nowActiveIdx].push(
-												new placeInfo(nowActiveTab, hotelLat, hotelLng, address, name, '3', 
-														new hotelInfo(hotelNum, hotelRoomNum, name, roomName, price), 
-														placeMarker(new google.maps.LatLng(hotelLat, hotelLng))
-												)
-										);
-										$('#hotelRecomPopup').modal('hide');
-										refreshMarkerList();
-									});
-								});
-								$('#hotelRecomPopup').modal();
 							},
 							error : function(result) {
 								alert('failed to get landmarks');
@@ -335,13 +289,13 @@ function makeDaysTab(totalDays) {
 		if (i === 1) {
 			$('#myTab').append(
 					'<li class="active"><a href="#day' + i + '" index="'
-							+ (parseInt(i) - 1) + '">day ' + i + '</a></li>');
+							+ (parseInt(i) - 1) + '">' + i + '</a></li>');
 			$('.tab-content').append(
 					'<div class="tab-pane active" id="day' + i + '"></div>');
 		} else {
 			$('#myTab').append(
 					'<li><a href="#day' + i + '" index="' + (parseInt(i) - 1)
-							+ '">day ' + i + '</a></li>');
+							+ '">' + i + '</a></li>');
 			$('.tab-content').append(
 					'<div class="tab-pane" id="day' + i + '"></div>');
 		}
@@ -396,4 +350,5 @@ function ChangeMapCenterZoom(places) {
 					right));
 	map.fitBounds(bounds);
 }
+
 //////////////TAB CONTROL END///////////////////////////

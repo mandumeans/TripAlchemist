@@ -71,7 +71,8 @@
 						</div>											
 						<div class="tab-pane" id="tab_default_2">
 							<div class ="container">
-	   							<div class ="row">	   	
+	   							<div class ="row">
+	   								<br>	   	
 	   								<div class ="col-lg-3 col-sm-6">
 	   								<a href="#myModal2" class="thumbnail" data-toggle="modal" data-target="#myModal2">
      									<img src="../image/go.JPG" alt="...">

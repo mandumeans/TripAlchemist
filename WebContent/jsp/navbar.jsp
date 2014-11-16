@@ -6,7 +6,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-</head>
+<script type ="text/javascript" src ="../js/tripmaker.js"></script>
+
 <%MemberDTO memberDTO =(MemberDTO)session.getAttribute("member_info"); %>
 <body>
 <div class="navbar navbar-inverse navbar-fixed-top">
@@ -28,7 +29,7 @@
             <%if(memberDTO == null){ %>
             <li><a href="#myModal" data-toggle="modal" data-target="#myModal">내일정만들기</a></li>
             <%}else{ %>
-            <li><a href ="#contact">내 일정만들기</a>
+            <li><a href="#myModal2" data-toggle="modal" data-target="#myModal2">내 일정만들기</a></li>
             <%} %>
           </ul>
           <%if(memberDTO ==null){ %>
@@ -77,6 +78,40 @@
         	</form>
       	</div>
     </div>
-</div>          
+</div>
+<div class="modal fade" id="myModal2">
+	<div class="modal-dialog">
+    	<div class="modal-content">
+        	<div class="modal-header">
+          		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          		<h4 class="modal-title">내 일정 만들기 </h4>
+        	</div>      
+        	<form name = "date" class="form" method="post" action="/" accept-charset="UTF-8">
+        		<div class="modal-body">      
+        			<div class="form-group">
+        				<div class = "form-group">
+						<h4 id="title">여행 제목을 입력해주세요.</h4>
+						<label class="sr-only"></label>
+                    	<input type ="text" class = "form-control" placeholder="예 : 5박 6일 유럽 여행 명소여행">
+					</div>
+					
+        				<h4 id="title">여행을 시작할 날짜와 끝낼 날짜를 입력해주세요.</h4>
+                    	<label class="sr-only"></label>
+                    	<input type ="text" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id ="start_date">
+                    </div>     
+                    <div class="form-group">
+                        <label class="sr-only"></label>
+                    	<input type ="text" class = "form-control"data-date-format="yyyy-mm-dd" placeholder="마지막 날짜" id="end_date">
+                    </div>                                          				
+				</div>
+        		<div class="modal-footer">          			
+          			<button type ="submit" class="btn btn-primary">만들기</button>
+          			<a href="#" data-dismiss="modal" class="btn btn-default">닫기</a>          
+        		</div>
+        	</form>
+      	</div>
+    </div>
+</div> 
+
 </body>
 </html>

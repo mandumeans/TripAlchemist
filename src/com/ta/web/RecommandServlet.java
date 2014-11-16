@@ -62,8 +62,6 @@ public class RecommandServlet extends HttpServlet {
             	rs = cStmt.getResultSet();
 				while (rs.next()) {
 					JSONObject obj = new JSONObject();
-					obj.put("hotelNum", rs.getString("hotelNum"));
-					obj.put("hotelRoomNum", rs.getString("hotelRoomNum"));
 					obj.put("rank", rs.getString("rankSum"));
 					obj.put("name", rs.getString("hotelName"));
 					obj.put("roomName", rs.getString("hotelRoomName"));
