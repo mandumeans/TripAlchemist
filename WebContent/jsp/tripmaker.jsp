@@ -27,9 +27,9 @@
 	<script type ="text/javascript" src ="../js/tripmaker.js"></script>
 	</head>
 	<body onload="initialize()">  
-	<jsp:include page="navbar.jsp" flush="false">
-        <jsp:param name="param" value="top"/>
-	</jsp:include>	  		
+		<jsp:include page="navbar.jsp" flush="false">
+	        <jsp:param name="param" value="top"/>
+		</jsp:include>	  		
 		<h2 id="title">여행을 시작할 날짜와 끝낼 날짜를 입력하세요.</h2>
     	<p><input type ="text" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id="start_date"></p>
     	<p><input type ="text" class = "form-control"data-date-format="yyyy-mm-dd" placeholder="마지막 날짜" id="end_date"></p>
@@ -44,6 +44,20 @@
 			</ul>
 			<div class="tab-content">
 			</div>
+		</div>
+		<div class="modal fade" id="hotelRecomPopup">
+			<div class="modal-dialog">
+		    	<div class="modal-content">
+		        	<div class="modal-header">
+		          		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		          		<h4 class="modal-title">호텔 선택 </h4>
+		        	</div>      
+	        		<div class="modal-body">        
+						<ul class="nav nav-tabs" id="recomHotelList">
+						</ul>
+					</div>
+		      	</div>
+		    </div>
 		</div>
 	</body>
 </html>
