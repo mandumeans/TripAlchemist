@@ -10,15 +10,25 @@ var nowActiveTab;
 var nowActiveIdx;
 
 // 명소들을 저장하기위한 구조체
-function placeInfo(day, lat, lng, address, name, type, marker) {
+function placeInfo(day, lat, lng, address, name, type, hotelInfo, marker) {
 	this.day = day;
 	this.lat = lat; // latitude
 	this.lng = lng; // longitude
 	this.address = address;
 	this.name = name;
-	this.type = type; // 1.landmark 2.food 3.accomodation 4.shopping
+	this.type = type; // 1.landmark 2.food 3.accommodation 4.shopping
 						// 5.entertaining 6.etc
+	this.hotelInfo = hotelInfo; //only for type 3(accommodation)
 	this.marker = marker;
+}
+
+//예약할 호텔 방의 정보를 저장하기 위한 구조체
+function hotelInfo(hotelNum, hotelRoomNum, hotelName, hotelRoomName, price) {
+	this.hotelNum = hotelNum;
+	this.hotelRoomNum = hotelRoomNum; 
+	this.hotelName = hotelName;
+	this.hotelRoomName = hotelRoomName; 
+	this.price = price;
 }
 
 // 교통정보를 저장하기 위한 구조체
@@ -37,34 +47,73 @@ function initialize() {
 	map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
 	map.set("disableDoubleClickZoom", true);
 	google.maps.event.addListener(map, 'dblclick', function(event) {
-		insertNewPlace(event.latLng);
+		//모달팝업 띄우기
+		$('#tripAddition').modal();
+		$('#tripAddition').on('shown.bs.modal', function () {
+		    $('#tripName').focus();
+		});
+		
+		//뭐든 이름을 넣어야함
+		$('#tripName').keyup( function(e) {
+			if($("#tripName").val() !== ''){
+				$('#category').prop( "disabled", false );
+			} else {
+				$('#category').prop( "disabled", true );
+			}
+	    });
+		
+		//카테고리를 뭐든 선택하면 바로 저장됨
+		$('#category').change(function(){
+			if($("#category option:selected").val() !== '0'){
+				$('#tripAddition').modal('hide');
+			}
+		});
+		
+		//팝업창이 닫히면 정보 저장함
+		$('#tripAddition').on('hide.bs.modal', function (e) {
+			//console.log( $("#category option:selected").val() );
+			//console.log( $("#tripName").val() );
+			if($("#category option:selected").val() === '0' || $("#tripName").val() === '') {
+				insertNewPlace(event.latLng,'','');
+			} else {
+				insertNewPlace(event.latLng, $("#tripName").val(), $("#category option:selected").val());
+			}
+			//modal reset
+			$("#tripName").val('');
+			$("#category").val('0').attr("selected", "selected");
+			$('#category').prop( "disabled", true );
+			
+			$(this).off('hide.bs.modal');			//이벤트 중복 발생 방지
+		});
 	});
 }
 
-function insertNewPlace(location) {
+function insertNewPlace(location, title, category) {
 	// push place information to places array
 	var lat = location.lat();
 	var lng = location.lng();
-
 	// 구글 API로 부터 실제 주소를 받아온다.
-	var realAddress = getRealAddress(lat, lng, function(result) {
+	var realAddress = getRealAddress(lat, lng, function(address) {
 		// 실제 주소 받아오는게 성공하면 현재 활성화된 탭에 리스트를 추가해줌
-		if (result === null || typeof result === 'undefined') {
+		if (address === null || typeof address === 'undefined') {
 			$(nowActiveTab).append(
-					'<li class="list-group-item">(' + lat.toFixed(2) + ','
-							+ lng.toFixed(2) + ')</li>');
+					'<li class="list-group-item">(' + lat.toFixed(2) + ','	+ lng.toFixed(2) + ')</li>');
 		} else {
-			$(nowActiveTab).append(
-					'<li class="list-group-item">' + result + '</li>');
+			if(title === ''){
+				$(nowActiveTab).append('<li class="list-group-item">' + address + '</li>');
+			} else {
+				$(nowActiveTab).append('<li class="list-group-item">' + title + '</li>');
+			}
 		}
 
 		// days 2차원 배열에 현재 활성화된 날짜에 placeInfo구조체를 배열에 집어넣고 Marker도 찍는다.
 		days[nowActiveIdx].push(new placeInfo(nowActiveTab, location.lat(),
-				location.lng(), result, '', '', placeMarker(location)));
+				location.lng(), address, title, category, '', placeMarker(location, category)));
 	}, function(result) {
 		alert('failed to get address' + result);
 	});
 }
+
 
 function getRealAddress(lat, lng, suceessCallback, failCallback) {
 	var latlng = new google.maps.LatLng(lat, lng);
@@ -86,12 +135,20 @@ function getRealAddress(lat, lng, suceessCallback, failCallback) {
 	});
 }
 
-function placeMarker(location) {
+
+function placeMarker(location, type) {
+	var color;
+	if(type === '3'){
+		color = '|57D9FF|000000'
+	} else {
+		color = '|FE6256|000000';
+	}
+	
 	var marker = new google.maps.Marker({
 		position : location,
 		map : map,
 		icon : 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld='
-				+ (parseInt(days[nowActiveIdx].length) + 1) + '|FE6256|000000',
+				+ (parseInt(days[nowActiveIdx].length) + 1) + color,
 		title : 'Click for detail'
 	});
 	google.maps.event.addListener(marker, 'click', function() {
@@ -99,6 +156,7 @@ function placeMarker(location) {
 	});
 	return marker;
 }
+
 
 function placeLandMarker(lat, lng, name) {
 	var marker = new google.maps.Marker({
@@ -120,6 +178,7 @@ function placeLandMarker(lat, lng, name) {
 	return marker;
 }
 
+
 function deletePlace(marker) {
 	for (var i = 0; i < days[nowActiveIdx].length; i++) {
 		if (days[nowActiveIdx][i].marker === marker) {
@@ -130,13 +189,17 @@ function deletePlace(marker) {
 	}
 }
 
+
 function removeAllLandmarker() {
 	for (var i = 0; i < landmarks.length; i++) {
 		landmarks[i].marker.setMap(null);
 	}
 }
 
+
 function refreshMarkerList() {
+	var color;
+	
 	for (var i = 0; i < days.length; i++) {
 		for (var j = 0; j < days[i].length; j++) {
 			days[i][j].marker.setMap(null);
@@ -144,60 +207,63 @@ function refreshMarkerList() {
 	}
 
 	for (var i = 0; i < days[nowActiveIdx].length; i++) {
+		if(days[nowActiveIdx][i].type === '3'){
+			color = '|57D9FF|000000';
+		} else {
+			color = '|FE6256|000000';
+		}
 		days[nowActiveIdx][i].marker.setMap(map);
 		days[nowActiveIdx][i].marker
 				.setIcon('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld='
-						+ (parseInt(i) + 1) + '|FE6256|000000');
+						+ (parseInt(i) + 1) + color);
 	}
 	$(nowActiveTab).empty();
 
 	for (var i = 0; i < days[nowActiveIdx].length; i++) {
+		var listItemLabel = days[nowActiveIdx][i].name;
+		if(listItemLabel === ''){
+			listItemLabel = days[nowActiveIdx][i].address;			
+		}
 		$(nowActiveTab).append(
-				'<li class="list-group-item">' + days[nowActiveIdx][i].address
+				'<li class="list-group-item">' + listItemLabel
 						+ '</li>');
 	}
 }
 ///////////////MAP CONTROL END//////////////////////////////
 
 $(document).ready(function() {
-	// DATE 관련 함수는 전 페이지에서 처리하므로 지워져야할 부분
-	var nowTemp = new Date();
-	var now = new Date(nowTemp.getFullYear(), nowTemp
-			.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
-	var checkin = $('#start_date').datepicker({
-						onRender : function(date) {
-							return date.valueOf() < now.valueOf() ? 'disabled' : '';
-						}
-					})
-			.on('changeDate',function(ev) {
-						if (ev.date.valueOf() > checkout.date
-								.valueOf()) {
-							var newDate = new Date(ev.date)
-							newDate
-									.setDate(newDate.getDate() + 1);
-							checkout.setValue(newDate);
-						}
-						checkin.hide();
-						$('#end_date')[0].focus();
-					}).data('datepicker');
-	var checkout = $('#end_date')
-			.datepicker(
-					{
-						onRender : function(date) {
-							return date.valueOf() <= checkin.date
-									.valueOf() ? 'disabled'
-									: '';
-						}
-					})
-			.on(
-					'changeDate',
-					function(ev) {
-						checkout.hide();
-						var totalDays = (checkout.date - checkin.date) / 86400000;
-						makeDaysTab(totalDays);
-						$('#title').append(
-								'(' + totalDays + '일)');
-					}).data('datepicker');
+	var getParameter = function (param) {
+	    var returnValue;
+	    var url = location.href;
+	    var parameters = (url.slice(url.indexOf('?') + 1, url.length)).split('&');
+	    for (var i = 0; i < parameters.length; i++) {
+	        var varName = parameters[i].split('=')[0];
+	        if (varName.toUpperCase() == param.toUpperCase()) {
+	            returnValue = parameters[i].split('=')[1];
+	            return decodeURIComponent(returnValue);
+	        }
+	    }
+	};
+	var parseDate = function (str){
+		var mdy = str.split('-');
+	    return new Date(mdy[0], mdy[1], mdy[2]);
+	}
+
+	var title = getParameter('title');
+	var startDate = getParameter('startDate');
+	var endDate = getParameter('endDate');
+	
+	if(typeof title === 'undefined' || typeof startDate === 'undefined' || typeof endDate === 'undefined'){
+		alert('Sorry. wrong access');
+		location.href = 'main.jsp';
+	}
+	
+	var checkin = parseDate(startDate);
+	var checkout = parseDate(endDate);
+
+	
+	var totalDays = ((checkout - checkin) / 86400000) + 1;
+	makeDaysTab(totalDays);
 
 	// Show Landmark button event
 	$('#btnLandmarkShow')
@@ -216,16 +282,21 @@ $(document).ready(function() {
 								contentType : "application/json",
 								dataType : "JSON",
 								timeout : 10000,
+								beforeSend: function() {
+									$('#loadingAnimation').modal();
+								},
 								success : function(result) {
 									$.each(result,function(index) {
-										landmarks.push(new placeInfo('',result[index].lat,result[index].lng,result[index].address,result[index].name,'1',
-												placeLandMarker(result[index].lat,result[index].lng,result[index].name)));
+										landmarks.push(new placeInfo('',result[index].lat,result[index].lng,result[index].address,result[index].name,'1','',
+ 												placeLandMarker(result[index].lat,result[index].lng,result[index].name)));
 									});
 								},
 								error : function(result) {
 									alert('failed to get landmarks');
 								}
-							}); // ajax end
+							}).done(function( data ) {
+								$('#loadingAnimation').modal('hide');
+							});; // ajax end
 						}
 					});
 
@@ -246,7 +317,7 @@ $(document).ready(function() {
 						var lat = days[nowActiveIdx][days[nowActiveIdx].length - 1].lat;
 						var lng = days[nowActiveIdx][days[nowActiveIdx].length - 1].lng;
 
-						var startDate = checkin.date;
+						var startDate = checkin;
 						var DateToGo = new Date();
 						DateToGo.setDate(startDate.getDate() + Number(nowActiveIdx));
 						var location = {
@@ -264,13 +335,49 @@ $(document).ready(function() {
 							dataType : "json",
 							contentType : "application/json",
 							timeout : 10000,
+							beforeSend: function() {
+								$('#loadingAnimation').modal();
+							},
 							success : function(result) {
 								console.log(result);
+								$('#recomHotelList').empty();
+								$.each(result,function(index) {
+									var hotelNum = result[index].hotelNum;
+									var hotelRoomNum = result[index].hotelRoomNum;
+									var rank = result[index].rank;
+									var name = result[index].name;
+									var roomName = result[index].roomName;
+									var price = result[index].price;
+									var rate = result[index].rate;
+									var address = result[index].address;
+									var hotelLat = result[index].lat;
+									var hotelLng = result[index].lng;
+									var listKey = 'hn' + hotelNum + 'hrn' + hotelRoomNum;
+
+									$('#recomHotelList').append('<li><a id="' + listKey + '"> 호텔 : ' + name  + ' / 방 이름 : ' + roomName + ' / 가격 : ' + price + ' / 평점 : ' + rate + '  </a></li>');
+									
+
+									// click event시
+									//days[nowActiveIdx].push(new placeInfo(nowActiveTab, lat, lng, address, name, '3', new hotelInfo(hotelNum, hotelRoomNum, name, roomName, price), placeMarker(location)));
+									$('#' + listKey).click(function(e) {
+										days[nowActiveIdx].push(
+												new placeInfo(nowActiveTab, hotelLat, hotelLng, address, name, '3', 
+														new hotelInfo(hotelNum, hotelRoomNum, name, roomName, price), 
+														placeMarker(new google.maps.LatLng(hotelLat, hotelLng), '3')
+												)
+										);
+										$('#hotelRecomPopup').modal('hide');
+										refreshMarkerList();
+									});
+								});
+								$('#hotelRecomPopup').modal();
 							},
 							error : function(result) {
 								alert('failed to get landmarks');
 							}
-						}); // ajax end
+						}).done(function( data ) {
+							$('#loadingAnimation').modal('hide');
+						});; // ajax end
 					}); // btnhotelRecommend event
 }); // document.ready end
 
@@ -281,6 +388,9 @@ function yyyymmdd(dateIn) {
 	return String(yyyy + '/' + mm + '/' + dd); // Leading zeros for mm and dd
 }
 
+//////////////TAB CONTROL ///////////////////////////
+
+
 // ////////////TAB CONTROL///////////////////////////
 
 function makeDaysTab(totalDays) {
@@ -289,13 +399,13 @@ function makeDaysTab(totalDays) {
 		if (i === 1) {
 			$('#myTab').append(
 					'<li class="active"><a href="#day' + i + '" index="'
-							+ (parseInt(i) - 1) + '">' + i + '</a></li>');
+							+ (parseInt(i) - 1) + '">day' + i + '</a></li>');
 			$('.tab-content').append(
 					'<div class="tab-pane active" id="day' + i + '"></div>');
 		} else {
 			$('#myTab').append(
 					'<li><a href="#day' + i + '" index="' + (parseInt(i) - 1)
-							+ '">' + i + '</a></li>');
+							+ '">day' + i + '</a></li>');
 			$('.tab-content').append(
 					'<div class="tab-pane" id="day' + i + '"></div>');
 		}

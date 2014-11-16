@@ -6,9 +6,22 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<script type ="text/javascript" src ="../js/tripmaker.js"></script>
 
 <%MemberDTO memberDTO =(MemberDTO)session.getAttribute("member_info"); %>
+<style type="text/css">
+	.datepicker {
+	z-index: 9999;
+	top: 0;
+	left: 0;
+	padding: 4px;
+	margin-top: 1px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	}
+</style>
+<script type ="text/javascript" src ="../js/navbar.js"></script>
+</head>
 <body>
 <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -86,22 +99,22 @@
           		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
           		<h4 class="modal-title">내 일정 만들기 </h4>
         	</div>      
-        	<form name = "date" class="form" method="post" action="/" accept-charset="UTF-8">
+        	<form name = "date" class="form" method="get" action="tripmaker.jsp" accept-charset="UTF-8">
         		<div class="modal-body">      
         			<div class="form-group">
         				<div class = "form-group">
 						<h4 id="title">여행 제목을 입력해주세요.</h4>
 						<label class="sr-only"></label>
-                    	<input type ="text" class = "form-control" placeholder="예 : 5박 6일 유럽 여행 명소여행">
+                    	<input type ="text" name="title" class = "form-control" placeholder="예 : 5박 6일 유럽 여행 명소여행">
 					</div>
 					
         				<h4 id="title">여행을 시작할 날짜와 끝낼 날짜를 입력해주세요.</h4>
                     	<label class="sr-only"></label>
-                    	<input type ="text" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id ="start_date">
+                    	<input type ="text" name="startDate" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id ="start_date">
                     </div>     
                     <div class="form-group">
                         <label class="sr-only"></label>
-                    	<input type ="text" class = "form-control"data-date-format="yyyy-mm-dd" placeholder="마지막 날짜" id="end_date">
+                    	<input type ="text" name="endDate" class = "form-control"data-date-format="yyyy-mm-dd" placeholder="마지막 날짜" id="end_date">
                     </div>                                          				
 				</div>
         		<div class="modal-footer">          			
