@@ -23,6 +23,14 @@
 						-moz-border-radius: 10px;
 						border-radius: 10px;
 		}
+		.btnComplete{
+			margin-left:10%;
+			margin-right:10%;
+			width : 140px;
+			height : 51px;
+			margin-top : 25px;
+			float: right;
+		}
 	</style>
 	<link href="../css/bootstrap.min.css" rel="stylesheet">
 	<link href ="../css/datepicker.css" rel="stylesheet">
@@ -53,6 +61,7 @@
 				<div class="tab-content"></div>
 			</div>
 		</div>
+		<a id="btnComplete" class="btnComplete btn btn-primary"><h4>Complete!!</h4></a>
 		<div class="modal fade" id="hotelRecomPopup">
 			<div class="modal-dialog">
 				<div class="modal-content">

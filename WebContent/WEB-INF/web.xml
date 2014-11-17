@@ -30,7 +30,17 @@
 	<servlet-name>RecommandServlet</servlet-name>
 	<servlet-class>com.ta.web.RecommandServlet</servlet-class>
 	</servlet>
+
+<!-- recommand -->
+	<servlet-mapping>
+	<servlet-name>SavetripServlet</servlet-name>
+	<url-pattern>/savetrip</url-pattern>
+	</servlet-mapping>
 	
+	<servlet>
+	<servlet-name>SavetripServlet</servlet-name>
+	<servlet-class>com.ta.web.SavetripServlet</servlet-class>
+	</servlet>
 	
 <!-- Update -->
   <servlet-mapping>

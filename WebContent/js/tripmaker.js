@@ -31,6 +31,20 @@ function hotelInfo(hotelNum, hotelRoomNum, hotelName, hotelRoomName, price) {
 	this.price = price;
 }
 
+
+//예약할 호텔 방의 정보를 저장하기 위한 구조체
+function SaveInfo(day, order, lat, lng, address, name, type, hotelNum, hotelRoomNum) {
+	this.day = day;						// day 0,1,2,3,4...
+	this.order = order;						// number 0,1,2,3,4...
+	this.lat = lat; 					// latitude
+	this.lng = lng; 					// longitude
+	this.address = address;
+	this.name = name;	
+	this.type = type; 					// 1.landmark 2.food 3.accommodation 4.shopping 5.entertaining 6.etc
+	this.hotelNum = hotelNum; 
+	this.hotelRoomNum = hotelRoomNum; 
+}
+
 // 교통정보를 저장하기 위한 구조체
 function transportInfo() {
 	var type = ''; // 1.car 2.bus 3.train 4.taxi 5.walk 6.bicycle 7.
@@ -92,6 +106,15 @@ function insertNewPlace(location, title, category) {
 	// push place information to places array
 	var lat = location.lat();
 	var lng = location.lng();
+
+	var color;
+	if(category === '3'){
+		color = '|57D9FF|000000'
+	} else {
+		color = '|FE6256|000000';
+	}
+	var iconURL = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + (parseInt(days[nowActiveIdx].length) + 1) + color
+	
 	// 구글 API로 부터 실제 주소를 받아온다.
 	var realAddress = getRealAddress(lat, lng, function(address) {
 		// 실제 주소 받아오는게 성공하면 현재 활성화된 탭에 리스트를 추가해줌
@@ -100,9 +123,9 @@ function insertNewPlace(location, title, category) {
 					'<li class="list-group-item">(' + lat.toFixed(2) + ','	+ lng.toFixed(2) + ')</li>');
 		} else {
 			if(title === ''){
-				$(nowActiveTab).append('<li class="list-group-item">' + address + '</li>');
+				$(nowActiveTab).append('<li class="list-group-item"><img src="' + iconURL + '">&nbsp&nbsp' + address + '</li>');
 			} else {
-				$(nowActiveTab).append('<li class="list-group-item">' + title + '</li>');
+				$(nowActiveTab).append('<li class="list-group-item"><img src="' + iconURL + '">&nbsp&nbsp' + title + '</li>');
 			}
 		}
 
@@ -225,7 +248,7 @@ function refreshMarkerList() {
 			listItemLabel = days[nowActiveIdx][i].address;			
 		}
 		$(nowActiveTab).append(
-				'<li class="list-group-item">' + listItemLabel
+				'<li class="list-group-item"><img src="' + days[nowActiveIdx][i].marker.getIcon() + '">&nbsp&nbsp' + listItemLabel
 						+ '</li>');
 	}
 }
@@ -266,119 +289,159 @@ $(document).ready(function() {
 	makeDaysTab(totalDays);
 
 	// Show Landmark button event
-	$('#btnLandmarkShow')
-			.click(
-					function() {
-						if ($('#btnLandmarkShow').hasClass('active')) {
-							// 랜드마크에 대한 마커 다 지우기
-							removeAllLandmarker();
-						} else {
-							$.ajax({
-								url : "/tripAlchemist/hello",
-								type : "POST",
-								// data: '{"VID" : "' +
-								// FindUrlVideoID(UrlInput)
-								// + '"}',
-								contentType : "application/json",
-								dataType : "JSON",
-								timeout : 10000,
-								beforeSend: function() {
-									$('#loadingAnimation').modal();
-								},
-								success : function(result) {
-									$.each(result,function(index) {
-										landmarks.push(new placeInfo('',result[index].lat,result[index].lng,result[index].address,result[index].name,'1','',
- 												placeLandMarker(result[index].lat,result[index].lng,result[index].name)));
-									});
-								},
-								error : function(result) {
-									alert('failed to get landmarks');
-								}
-							}).done(function( data ) {
-								$('#loadingAnimation').modal('hide');
-							});; // ajax end
-						}
+	$('#btnLandmarkShow').click(function() {
+		if ($('#btnLandmarkShow').hasClass('active')) {
+			// 랜드마크에 대한 마커 다 지우기
+			removeAllLandmarker();
+		} else {
+			$.ajax({
+				url : "/tripAlchemist/hello",
+				type : "POST",
+				// data: '{"VID" : "' +
+				// FindUrlVideoID(UrlInput)
+				// + '"}',
+				contentType : "application/json",
+				dataType : "JSON",
+				timeout : 10000,
+				beforeSend: function() {
+					$('#loadingAnimation').modal();
+				},
+				success : function(result) {
+					$.each(result,function(index) {
+						landmarks.push(new placeInfo('',result[index].lat,result[index].lng,result[index].address,result[index].name,'1','',
+								placeLandMarker(result[index].lat,result[index].lng,result[index].name)));
 					});
+				},
+				error : function(result) {
+					alert('failed to get landmarks');
+				}
+			}).done(function( data ) {
+				$('#loadingAnimation').modal('hide');
+			});; // ajax end
+		}
+	});
 
 	// hotel Recommend button event
-	$('#btnHotelRecommand')
-			.click(
-					function() {
-						// 탭이 존재 하는지 확인
-						if ($('#myTab').find('li').length <= 0) {
-							alert('Please choose places to go first');
-							return;
-						}
-						// 액티브된 탭에 일정이 한개 이상 존재하는 지 확인
-						if ($('div.tab-pane.active').find('li').length <= 0) {
-							alert('Please choose places to go first!');
-							return;
-						}
-						var lat = days[nowActiveIdx][days[nowActiveIdx].length - 1].lat;
-						var lng = days[nowActiveIdx][days[nowActiveIdx].length - 1].lng;
+	$('#btnHotelRecommand').click(function() {
+		// 탭이 존재 하는지 확인
+		if ($('#myTab').find('li').length <= 0) {
+			alert('Please choose places to go first');
+			return;
+		}
+		// 액티브된 탭에 일정이 한개 이상 존재하는 지 확인
+		if ($('div.tab-pane.active').find('li').length <= 0) {
+			alert('Please choose places to go first!');
+			return;
+		}
+		var lat = days[nowActiveIdx][days[nowActiveIdx].length - 1].lat;
+		var lng = days[nowActiveIdx][days[nowActiveIdx].length - 1].lng;
 
-						var startDate = checkin;
-						var DateToGo = new Date();
-						DateToGo.setDate(startDate.getDate() + Number(nowActiveIdx));
-						var location = {
-							"lat" : lat,
-							"lng" : lng,
-							'theDay' : yyyymmdd(DateToGo)
-						};
+		var startDate = checkin;
+		var DateToGo = new Date();
+		DateToGo.setDate(startDate.getDate() + Number(nowActiveIdx));
+		var location = {
+			"lat" : lat,
+			"lng" : lng,
+			'theDay' : yyyymmdd(DateToGo)
+		};
 
-						console.log(location);
-						// ajax로 추천된 데이터들 콜백함수를 통해 뿌려줌
-						$.ajax({
-							url : "/tripAlchemist/recommand",
-							type : "GET",
-							data : location,
-							dataType : "json",
-							contentType : "application/json",
-							timeout : 10000,
-							beforeSend: function() {
-								$('#loadingAnimation').modal();
-							},
-							success : function(result) {
-								console.log(result);
-								$('#recomHotelList').empty();
-								$.each(result,function(index) {
-									var hotelNum = result[index].hotelNum;
-									var hotelRoomNum = result[index].hotelRoomNum;
-									var rank = result[index].rank;
-									var name = result[index].name;
-									var roomName = result[index].roomName;
-									var price = result[index].price;
-									var rate = result[index].rate;
-									var address = result[index].address;
-									var hotelLat = result[index].lat;
-									var hotelLng = result[index].lng;
-									var listKey = 'hn' + hotelNum + 'hrn' + hotelRoomNum;
+		// ajax로 추천된 데이터들 콜백함수를 통해 뿌려줌
+		$.ajax({
+			url : "/tripAlchemist/recommand",
+			type : "GET",
+			data : location,
+			dataType : "json",
+			contentType : "application/json",
+			timeout : 10000,
+			beforeSend: function() {
+				$('#loadingAnimation').modal();
+			},
+			success : function(result) {
+				$('#recomHotelList').empty();
+				$.each(result,function(index) {
+					var hotelNum = result[index].hotelNum;
+					var hotelRoomNum = result[index].hotelRoomNum;
+					var rank = result[index].rank;
+					var name = result[index].name;
+					var roomName = result[index].roomName;
+					var price = result[index].price;
+					var rate = result[index].rate;
+					var address = result[index].address;
+					var hotelLat = result[index].lat;
+					var hotelLng = result[index].lng;
+					var listKey = 'hn' + hotelNum + 'hrn' + hotelRoomNum;
 
-									$('#recomHotelList').append('<li><a id="' + listKey + '"> 호텔 : ' + name  + ' / 방 이름 : ' + roomName + ' / 가격 : ' + price + ' / 평점 : ' + rate + '  </a></li>');
-									
+					$('#recomHotelList').append('<li><a id="' + listKey + '"> 호텔 : ' + name  + ' / 방 이름 : ' + roomName + ' / 가격 : ' + price + ' / 평점 : ' + rate + '  </a></li>');
+					
 
-									// click event시
-									//days[nowActiveIdx].push(new placeInfo(nowActiveTab, lat, lng, address, name, '3', new hotelInfo(hotelNum, hotelRoomNum, name, roomName, price), placeMarker(location)));
-									$('#' + listKey).click(function(e) {
-										days[nowActiveIdx].push(
-												new placeInfo(nowActiveTab, hotelLat, hotelLng, address, name, '3', 
-														new hotelInfo(hotelNum, hotelRoomNum, name, roomName, price), 
-														placeMarker(new google.maps.LatLng(hotelLat, hotelLng), '3')
-												)
-										);
-										$('#hotelRecomPopup').modal('hide');
-										refreshMarkerList();
-									});
-								});
-								$('#hotelRecomPopup').modal();
-							},
-							error : function(result) {
-								alert('failed to get landmarks');
-							}
-						}).done(function( data ) {
-							$('#loadingAnimation').modal('hide');
-						});; // ajax end
-					}); // btnhotelRecommend event
+					// click event시
+					//days[nowActiveIdx].push(new placeInfo(nowActiveTab, lat, lng, address, name, '3', new hotelInfo(hotelNum, hotelRoomNum, name, roomName, price), placeMarker(location)));
+					$('#' + listKey).click(function(e) {
+						days[nowActiveIdx].push(
+								new placeInfo(nowActiveTab, hotelLat, hotelLng, address, name, '3', 
+										new hotelInfo(hotelNum, hotelRoomNum, name, roomName, price), 
+										placeMarker(new google.maps.LatLng(hotelLat, hotelLng), '3')
+								)
+						);
+						$('#hotelRecomPopup').modal('hide');
+						refreshMarkerList();
+					});
+				});
+				$('#hotelRecomPopup').modal();
+			},
+			error : function(result) {
+				alert('failed to get hotel information');
+			}
+		}).done(function( data ) {
+			$('#loadingAnimation').modal('hide');
+		});; // ajax end
+	}); // btnhotelRecommend event
+
+	// hotel Recommend button event
+	$('#btnComplete').click(function() {
+		var sum = 0;
+		var ArrayToSend = new Array();
+		
+		for (var i = 0; i < days.length; i++) {
+			for (var j = 0; j < days[i].length; j++) {
+				sum = sum + 1;
+				if(days[i][j].hotelInfo === ''){
+					ArrayToSend.push(new SaveInfo(i, j, days[i][j].lat, days[i][j].lng, encodeURIComponent(days[i][j].address), encodeURIComponent(days[i][j].name), days[i][j].type, '', ''));
+				} else {
+					ArrayToSend.push(new SaveInfo(i, j, days[i][j].lat, days[i][j].lng, encodeURIComponent(days[i][j].address), encodeURIComponent(days[i][j].name), days[i][j].type, days[i][j].hotelInfo.hotelNum, days[i][j].hotelInfo.hotelRoomNum));
+				}
+			}
+		}
+
+		if(sum === 0){
+			alert('만들어진 일정이 한 개도 없네요 적어도 한개는 넣어주세요');
+			return;
+		}
+
+		// ajax로 추천된 데이터들 콜백함수를 통해 뿌려줌
+		$.ajax({
+			url : "/tripAlchemist/savetrip",
+			type : "GET",
+			data : {title : title, sDate : yyyymmdd(checkin), eDate : yyyymmdd(checkout), myData : JSON.stringify(ArrayToSend)},
+			dataType : "json",
+			contentType : "application/json",
+			timeout : 10000,
+			beforeSend: function() {
+				$('#loadingAnimation').modal();
+			},
+			success : function(result) {
+				console.log(result);
+				
+			},
+			error : function(result) {
+				alert('failed to save');
+			}
+		}).done(function( data ) {
+			$('#loadingAnimation').modal('hide');
+		}); // ajax end
+		
+	});
+	
 }); // document.ready end
 
 function yyyymmdd(dateIn) {
