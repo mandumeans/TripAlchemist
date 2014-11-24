@@ -41,8 +41,10 @@ public class SavetripServlet extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	protected void process(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setContentType("application/json;charset=UTF-8");
+		req.setCharacterEncoding("utf-8");
 		MemberDTO memberDTO =(MemberDTO)req.getSession().getAttribute("member_info");
 		Connection conn = null;
+        Statement normalStmt = null;
         PreparedStatement stmt = null;
         ResultSet selectRs = null;
         
@@ -72,90 +74,94 @@ public class SavetripServlet extends HttpServlet {
 		JSONArray jArray;
 		
 		try {
-			try {
-				conn = DBConnector.makeConnection();
-	            String mstQuery = "INSERT INTO `tripalchemist`.`tripmst`(`title`,`startDat`,`endDat`,`description`,`public`,`createdat`,`modifydat`,`createby`,`modifyby`)"
-	            												+ "VALUES(?,?,?,?,?,NOW(),NOW(),?,'');";	            
-	        	stmt = conn.prepareStatement(mstQuery);	        	
-				stmt.setString(1, title);
-				stmt.setString(2, sDate);
-				stmt.setString(3, eDate);
-				stmt.setString(4, "");
-	        	stmt.setString(5, "Y");
-	        	stmt.setString(6, email);		        	
-	        	stmt.executeUpdate();
-	        	
-	        	String selectQuery = "SELECT * FROM `tripalchemist`.`tripmst` WHERE createby = ? ORDER BY createdat desc;";
-	        	stmt = conn.prepareStatement(selectQuery);  	
-	        	stmt.setString(1, email);
-	        	selectRs = stmt.executeQuery();
-	        	
-	        	if(selectRs.next()){
-	                JSONObject obj = new JSONObject();
-	                tripNum = selectRs.getString("tripNum");
-	            }
-	        	
-				jArray = (JSONArray)parser.parse(req.getParameter("myData"));
-				Iterator<JSONObject> it = jArray.iterator();
-				while (it.hasNext()) {
-					JSONObject jObject = it.next();
-					Long day = (Long) jObject.get("day");
-					Long order = (Long) jObject.get("order");
-					Double lat = (Double) jObject.get("lat");
-					Double lng = (Double) jObject.get("lng");
-					String address = URLDecoder.decode((String) jObject.get("address"), "UTF-8");
-					String name = URLDecoder.decode((String) jObject.get("name"), "UTF-8");
-					String type = (String) jObject.get("type");
-					String hotelNum = (String) jObject.get("hotelNum");
-					String hotelRoomNum = (String) jObject.get("hotelRoomNum");
-					String stepQuery = null;
-					System.out.println("Value2 : " + hotelNum + " / " + hotelRoomNum);
-					if (hotelNum.equals("") || hotelRoomNum.equals("")){
-						//no reservation
-						stepQuery = "INSERT INTO `tripalchemist`.`tripstep`(`tripNum`,`seqDay`,`seqOrder`,`placeNum`,`placeName`,`placeLat`,`placeLng`,`placeAddress`,`createby`,`modifyby`)"
-								+ "VALUES(?,?,?,?,?,?,?,?,?,'');";	   
-						stmt = conn.prepareStatement(stepQuery);	
-						stmt.setString(1, tripNum);	     	
-						stmt.setString(2, day.toString());	
-						stmt.setString(3, order.toString());
-						stmt.setInt(4, Integer.parseInt(type.equals("")?"0":type));
-						stmt.setString(5, name);
-						stmt.setString(6, lat.toString());
-						stmt.setString(7, lng.toString());	
-						stmt.setString(8, address);	
-						stmt.setString(9, email);		  
-					} else {
-						//reservation
-						stepQuery = "INSERT INTO `tripalchemist`.`tripstep`(`tripNum`,`seqDay`,`seqOrder`,`placeNum`,`placeName`,`placeLat`,`placeLng`,`placeAddress`,`hotelNum`,`hotelRoomNum`,`createby`,`modifyby`)"
-								+ "VALUES(?,?,?,?,?,?,?,?,?,?,?,'');";	   
-						stmt = conn.prepareStatement(stepQuery);	
-						stmt.setString(1, tripNum);	     	
-						stmt.setString(2, day.toString());	
-						stmt.setString(3, order.toString());
-						stmt.setInt(4, Integer.parseInt(type.equals("")?"0":type));
-						stmt.setString(5, name);
-						stmt.setString(6, lat.toString());
-						stmt.setString(7, lng.toString());	
-						stmt.setString(8, address);	
-						stmt.setInt(9, Integer.parseInt(hotelNum));	
-						stmt.setInt(10, Integer.parseInt(hotelRoomNum));	
-						stmt.setString(11, email);		  
-					}
-					stmt.executeUpdate();
-							
-				}
-			} catch (SQLException | ClassNotFoundException | NamingException e) {
-				e.printStackTrace();
-			}
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+			conn = DBConnector.makeConnection();
+			//normalStmt = conn.createStatement();
+			//String UTFQuery = "SET NAMES utf8;SET collation_connection = 'utf8_general_ci';SET default-character-set = utf8;SET default-character-set = 'utf8';SET character_set_server =  'utf8';";
+			//normalStmt.execute(UTFQuery);
+			
+            String mstQuery = "INSERT INTO `tripalchemist`.`tripmst`(`title`,`startDat`,`endDat`,`description`,`public`,`createdat`,`modifydat`,`createby`,`modifyby`)"
+            												+ "VALUES(?,?,?,?,?,NOW(),NOW(),?,'');";	            
+        	stmt = conn.prepareStatement(mstQuery);	        	
+			stmt.setString(1, title);
+			stmt.setString(2, sDate);
+			stmt.setString(3, eDate);
+			stmt.setString(4, "");
+        	stmt.setString(5, "Y");
+        	stmt.setString(6, email);		        	
+        	stmt.executeUpdate();
+        	
+        	String selectQuery = "SELECT * FROM `tripalchemist`.`tripmst` WHERE createby = ? ORDER BY createdat desc;";
+        	stmt = conn.prepareStatement(selectQuery);  	
+        	stmt.setString(1, email);
+        	selectRs = stmt.executeQuery();
+        	
+        	if(selectRs.next()){
+                JSONObject obj = new JSONObject();
+                tripNum = selectRs.getString("tripNum");
+            }
 
-		PrintWriter out = resp.getWriter();
-		
-        resp.sendRedirect("./jsp/main.jsp");
-        
-        out.flush();
-        out.close();    
+    		System.out.println(req.getParameter("myData"));
+			jArray = (JSONArray)parser.parse(req.getParameter("myData"));
+			Iterator<JSONObject> it = jArray.iterator();
+			while (it.hasNext()) {
+				JSONObject jObject = it.next();
+				Long day = (Long) jObject.get("day");
+				Long order = (Long) jObject.get("order");
+				Double lat = (Double) jObject.get("lat");
+				Double lng = (Double) jObject.get("lng");
+				String address = URLDecoder.decode((String) jObject.get("address"), "UTF-8");
+				String name = URLDecoder.decode((String) jObject.get("name"), "UTF-8");
+				String type = (String) jObject.get("type");
+				String hotelNum = (String) jObject.get("hotelNum");
+				String hotelRoomNum = (String) jObject.get("hotelRoomNum");
+				String stepQuery = null;
+				System.out.println("Value2 : " + address + " / " + name);
+				if (hotelNum.equals("") || hotelRoomNum.equals("")){
+					//no reservation
+					stepQuery = "INSERT INTO `tripalchemist`.`tripstep`(`tripNum`,`seqDay`,`seqOrder`,`placeNum`,`placeName`,`placeLat`,`placeLng`,`placeAddress`,`createby`,`modifyby`)"
+							+ "VALUES(?,?,?,?,?,?,?,?,?,'');";	   
+					stmt = conn.prepareStatement(stepQuery);	
+					stmt.setString(1, tripNum);	     	
+					stmt.setString(2, day.toString());	
+					stmt.setString(3, order.toString());
+					stmt.setInt(4, Integer.parseInt(type.equals("")?"0":type));
+					stmt.setString(5, name);
+					stmt.setString(6, lat.toString());
+					stmt.setString(7, lng.toString());	
+					stmt.setString(8, address);	
+					stmt.setString(9, email);		  
+				} else {
+					//reservation
+					stepQuery = "INSERT INTO `tripalchemist`.`tripstep`(`tripNum`,`seqDay`,`seqOrder`,`placeNum`,`placeName`,`placeLat`,`placeLng`,`placeAddress`,`hotelNum`,`hotelRoomNum`,`createby`,`modifyby`)"
+							+ "VALUES(?,?,?,?,?,?,?,?,?,?,?,'');";	   
+					stmt = conn.prepareStatement(stepQuery);	
+					stmt.setString(1, tripNum);	     	
+					stmt.setString(2, day.toString());	
+					stmt.setString(3, order.toString());
+					stmt.setInt(4, Integer.parseInt(type.equals("")?"0":type));
+					stmt.setString(5, name);
+					stmt.setString(6, lat.toString());
+					stmt.setString(7, lng.toString());	
+					stmt.setString(8, address);	
+					stmt.setInt(9, Integer.parseInt(hotelNum));	
+					stmt.setInt(10, Integer.parseInt(hotelRoomNum));	
+					stmt.setString(11, email);		  
+				}
+				stmt.executeUpdate();
+						
+			}
+
+			PrintWriter out = resp.getWriter();
+			out.print((new JSONArray()).add((new JSONObject()).put("result", "success")));
+	        
+	        out.flush();
+	        out.close();
+		} catch (SQLException | ClassNotFoundException | NamingException | ParseException e) {
+			e.printStackTrace();
+			resp.setStatus(500);
+			PrintWriter out = resp.getWriter();
+			out.print((new JSONArray()).add((new JSONObject()).put("result", "fail")));
+			return;
+		}
     }
 }
