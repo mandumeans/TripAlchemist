@@ -109,11 +109,11 @@ function insertNewPlace(location, title, category) {
 
 	var color;
 	if(category === '3'){
-		color = '|57D9FF|000000'
+		color = '|57D9FF|000000';
 	} else {
 		color = '|FE6256|000000';
 	}
-	var iconURL = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + (parseInt(days[nowActiveIdx].length) + 1) + color
+	var iconURL = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + (parseInt(days[nowActiveIdx].length) + 1) + color;
 	
 	// 구글 API로 부터 실제 주소를 받아온다.
 	var realAddress = getRealAddress(lat, lng, function(address) {
@@ -267,6 +267,7 @@ $(document).ready(function() {
 	        }
 	    }
 	};
+	
 	var parseDate = function (str){
 		var mdy = str.split('-');
 	    return new Date(mdy[0], mdy[1], mdy[2]);
@@ -422,7 +423,7 @@ $(document).ready(function() {
 		$.ajax({
 			url : "/tripAlchemist/savetrip",
 			type : "GET",
-			data : {title : title, sDate : yyyymmdd(checkin), eDate : yyyymmdd(checkout), myData : JSON.stringify(ArrayToSend)},
+			data : {title : encodeURIComponent(title), sDate : yyyymmdd(checkin), eDate : yyyymmdd(checkout), myData : JSON.stringify(ArrayToSend)},
 			dataType : "json",
 			contentType : "application/json",
 			timeout : 10000,
