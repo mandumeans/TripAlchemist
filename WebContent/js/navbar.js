@@ -28,7 +28,7 @@ $(document).ready(function() {
 		}
 	}).on('changeDate',	function(ev) {
 		checkout.hide();
-		var totalDays = ((checkout - checkin) / 86400000) + 1;
+		var totalDays = ((checkout.date - checkin.date) / 86400000) + 1;
 		$('#title').append('(' + totalDays + '일)');
 	}).data('datepicker');
 	

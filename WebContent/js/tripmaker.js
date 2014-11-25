@@ -130,8 +130,8 @@ function insertNewPlace(location, title, category) {
 		}
 
 		// days 2차원 배열에 현재 활성화된 날짜에 placeInfo구조체를 배열에 집어넣고 Marker도 찍는다.
-		days[nowActiveIdx].push(new placeInfo(nowActiveTab, location.lat(),
-				location.lng(), address, title, category, '', placeMarker(location, category)));
+		days[nowActiveIdx].push(new placeInfo(nowActiveTab, parseFloat(location.lat()),
+				parseFloat(location.lng()), address, title, category, '', placeMarker(location, category)));
 	}, function(result) {
 		alert('failed to get address' + result);
 	});
@@ -378,7 +378,7 @@ $(document).ready(function() {
 					//days[nowActiveIdx].push(new placeInfo(nowActiveTab, lat, lng, address, name, '3', new hotelInfo(hotelNum, hotelRoomNum, name, roomName, price), placeMarker(location)));
 					$('#' + listKey).click(function(e) {
 						days[nowActiveIdx].push(
-								new placeInfo(nowActiveTab, hotelLat, hotelLng, address, name, '3', 
+								new placeInfo(nowActiveTab, parseFloat(hotelLat), parseFloat(hotelLng), address, name, '3', 
 										new hotelInfo(hotelNum, hotelRoomNum, name, roomName, price), 
 										placeMarker(new google.maps.LatLng(hotelLat, hotelLng), '3')
 								)
@@ -430,10 +430,16 @@ $(document).ready(function() {
 				$('#loadingAnimation').modal();
 			},
 			success : function(result) {
-				console.log(result);
+				if(result){
+					alert('success');
+					location.href = 'main.jsp';
+				} else {
+					alert('failed to save');
+				}
 				
 			},
 			error : function(result) {
+				console.log('error : ' + result);
 				alert('failed to save');
 			}
 		}).done(function( data ) {
