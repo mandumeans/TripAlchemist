@@ -105,16 +105,16 @@
         				<div class = "form-group">
 						<h4 id="title">여행 제목을 입력해주세요.</h4>
 						<label class="sr-only"></label>
-                    	<input type ="text" name="title" class = "form-control" placeholder="예 : 5박 6일 유럽 여행 명소여행">
+                    	<input type ="text" name="title" class = "form-control" placeholder="예 : 5박 6일 유럽 여행 명소여행" autofocus required>
 					</div>
 					
         				<h4 id="title">여행을 시작할 날짜와 끝낼 날짜를 입력해주세요.</h4>
                     	<label class="sr-only"></label>
-                    	<input type ="text" name="startDate" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id ="start_date">
+                    	<input type ="text" name="startDate" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id ="start_date" required>
                     </div>     
                     <div class="form-group">
                         <label class="sr-only"></label>
-                    	<input type ="text" name="endDate" class = "form-control"data-date-format="yyyy-mm-dd" placeholder="마지막 날짜" id="end_date">
+                    	<input type ="text" name="endDate" class = "form-control"data-date-format="yyyy-mm-dd" placeholder="마지막 날짜" id="end_date" required>
                     </div>                                          				
 				</div>
         		<div class="modal-footer">          			

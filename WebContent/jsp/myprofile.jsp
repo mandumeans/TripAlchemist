@@ -3,6 +3,9 @@
 <%@ page import ="java.sql.*" %>
 <%@ page import ="com.ta.web.DBConnector" %>
 <%@page import ="member.dto.MemberDTO" %>
+<%@page import ="member.dto.ScheduleList" %>
+<%@page import ="java.util.Vector"%>
+<%@page import = "member.dto.ScheduleDao" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,21 +13,12 @@
 <title>Insert title here</title>
 <link href="../css/bootstrap.min.css" rel="stylesheet">
 <link href="../css/bootstrap.css" rel="stylesheet">
-<link href ="../css/test.css" rel ="stylesheet">
+<link href ="../css/testing.css" rel ="stylesheet">
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="../js/bootstrap.min.js"></script>
-<script type ="text/javascript" src ="../js/test.js"></script>
+<script type ="text/javascript" src ="../js/testing.js"></script>
 
-<link href ="../css/datepicker.css" rel ="stylesheet">
-<script type ="text/javascript" src ="../js/bootstrap-datepicker.js"></script> 
 <%MemberDTO memberDTO =(MemberDTO)session.getAttribute("member_info"); %>
-<script type ="text/javascript">
-	$(document).ready(function(){
-		$('#example2').datepicker({
-			format:"yyyy-mm-dd"
-		});
-	});
-</script> 
 </head>
 <body>
 <jsp:include page="navbar.jsp" flush="false">
@@ -55,18 +49,58 @@
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="tab_default_1">
-	   						<div class ="container">
-	   							<div class ="row">	
-	   								<br>   	
-	   								<div class ="col-lg-3 col-sm-6">
-	   								<a href="#myModal1" class="thumbnail" data-toggle="modal" data-target="#myModal1">
-     									<img src="../image/jo.JPG" alt="...">
-   									</a>
-   									</div>							
-	   								<div class ="col-lg-3 col-sm-6"><div class ="well"><a href="#myModal1" data-toggle="modal" data-target="#myModal1">일정만들기</a></div></div>
-	   								<div class ="col-lg-3 col-sm-6"><div class ="well"><a href ="#">일정 만들기</a></div></div>	   									   								
-	   							</div>
-	   						</div>
+	   						<div class="container">
+   
+    <div class="row">
+    
+        <div class="panel panel-primary filterable">
+            <div class="panel-heading">
+                <h4 class="panel-title"><a href="#myModal1" data-toggle="modal" data-target="#myModal1" class="btn btn-info">내 일정 만들기</a></h4>
+                <div class="pull-right">
+                    <button class="btn btn-default btn-xs btn-filter"><span class="glyphicon glyphicon-filter"></span> Filter</button>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr class="filters">
+                        <th><input type="text" class="form-control" placeholder="#" disabled></th>
+                        <th><input type="text" class="form-control" placeholder="제목" disabled></th>
+                        <th><input type="text" class="form-control" placeholder="시작 날짜" disabled></th>
+                        <th><input type="text" class="form-control" placeholder="끝 날짜" disabled></th>
+                        <th><input type="text" class="form-control" placeholder="만든 시간" disabled></th>   
+                          
+                    </tr>
+                </thead>
+                <tbody>
+                             
+                <%
+                ScheduleDao bdao = new ScheduleDao();
+ Vector<ScheduleList> vector = new Vector();
+ vector = bdao.getAllBoard();
+ 
+ // 게시판 빈클래스 선언
+ 	ScheduleList bean = new ScheduleList();
+ 
+ 		for(int i = 0 ; i < vector.size() ; i++){
+  			
+  			bean = vector.get(i);
+ 				%>
+                    <tr>
+                        <td><%=bean.getTripNum()%></td>
+                        <td><%=bean.getTitle()%></td>
+                        <td><%=bean.getStartDat()%></td>
+                        <td><%=bean.getEndDat()%></td>
+                        <td><%=bean.getCreatedat()%></td>                                                                 
+                    </tr>
+                 <%   
+    }
+    %>                
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+	   					
  		
 						</div>											
 						<div class="tab-pane" id="tab_default_2">
@@ -203,16 +237,16 @@
         				<div class = "form-group">
 						<h4 id="title">여행 제목을 입력해주세요.</h4>
 						<label class="sr-only"></label>
-                    	<input type ="text" class = "form-control" placeholder="예 : 5박 6일 유럽 여행 명소여행">
+                    	<input type ="text" class = "form-control" placeholder="예 : 5박 6일 유럽 여행 명소여행" required autofocus>
 					</div>
 					
         				<h4 id="title">여행을 시작할 날짜와 끝낼 날짜를 입력해주세요.</h4>
                     	<label class="sr-only"></label>
-                    	<input type ="text" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id ="example2">
+                    	<input type ="text" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id ="start_date" required>
                     </div>     
                     <div class="form-group">
                         <label class="sr-only"></label>
-                    	<input type ="text" class = "form-control"data-date-format="yyyy-mm-dd" placeholder="마지막 날짜" id="end_date">
+                    	<input type ="text" class = "form-control"data-date-format="yyyy-mm-dd" placeholder="마지막 날짜" id="end_date" required>
                     </div>                                          				
 				</div>
         		<div class="modal-footer">          			
