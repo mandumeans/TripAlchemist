@@ -67,7 +67,7 @@ public class SavetripServlet extends HttpServlet {
 			sDate = req.getParameterValues("sDate")[0];
 			eDate = req.getParameterValues("eDate")[0];
 		}
-		System.out.println("Value : " + email + " / " + sDate + " / " + eDate);
+		System.out.println("Value : " + title + " / " + sDate + " / " + eDate);
 		
 		JSONParser parser = new JSONParser();
 		
@@ -146,7 +146,7 @@ public class SavetripServlet extends HttpServlet {
 					stmt.setInt(9, Integer.parseInt(hotelNum));	
 					stmt.setInt(10, Integer.parseInt(hotelRoomNum));	
 					stmt.setString(11, email);		  
-				}
+				} 
 				stmt.executeUpdate();
 						
 			}
