@@ -13,10 +13,8 @@
 <title>Insert title here</title>
 <link href="../css/bootstrap.min.css" rel="stylesheet">
 <link href="../css/bootstrap.css" rel="stylesheet">
-<link href ="../css/testing.css" rel ="stylesheet">
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="../js/bootstrap.min.js"></script>
-<script type ="text/javascript" src ="../js/testing.js"></script>
 
 <%MemberDTO memberDTO =(MemberDTO)session.getAttribute("member_info"); %>
 </head>
@@ -50,55 +48,47 @@
 					<div class="tab-content">
 						<div class="tab-pane active" id="tab_default_1">
 	   						<div class="container">
-   
-    <div class="row">
-    
-        <div class="panel panel-primary filterable">
-            <div class="panel-heading">
-                <h4 class="panel-title"><a href="#myModal1" data-toggle="modal" data-target="#myModal1" class="btn btn-info">내 일정 만들기</a></h4>
-                <div class="pull-right">
-                    <button class="btn btn-default btn-xs btn-filter"><span class="glyphicon glyphicon-filter"></span> Filter</button>
-                </div>
-            </div>
-            <table class="table">
-                <thead>
-                    <tr class="filters">
-                        <th><input type="text" class="form-control" placeholder="#" disabled></th>
-                        <th><input type="text" class="form-control" placeholder="제목" disabled></th>
-                        <th><input type="text" class="form-control" placeholder="시작 날짜" disabled></th>
-                        <th><input type="text" class="form-control" placeholder="끝 날짜" disabled></th>
-                        <th><input type="text" class="form-control" placeholder="만든 시간" disabled></th>   
-                          
-                    </tr>
-                </thead>
-                <tbody>
-                             
-                <%
-                ScheduleDao bdao = new ScheduleDao();
+   <br><br>
+    <div id="products" class="row list-group">  
+    	<div class="item  col-xs-4 col-lg-4">
+        
+                 <a href="#myModal1" class="thumbnail" data-toggle="modal" data-target="#myModal1">
+     				<img src="../image/calendar.JPG" alt="...">
+   				</a>                        
+        
+        </div>   
+     <%
+ScheduleDao bdao = new ScheduleDao();
  Vector<ScheduleList> vector = new Vector();
  vector = bdao.getAllBoard();
- 
- // 게시판 빈클래스 선언
+
  	ScheduleList bean = new ScheduleList();
- 
+
  		for(int i = 0 ; i < vector.size() ; i++){
   			
   			bean = vector.get(i);
- 				%>
-                    <tr>
-                        <td><%=bean.getTripNum()%></td>
-                        <td><%=bean.getTitle()%></td>
-                        <td><%=bean.getStartDat()%></td>
-                        <td><%=bean.getEndDat()%></td>
-                        <td><%=bean.getCreatedat()%></td>                                                                 
-                    </tr>
-                 <%   
-    }
-    %>                
-                </tbody>
-            </table>
-        </div>
-    </div>
+  		
+ 				%>  
+        <div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
+                 <a href ="tripmaker.jsp"><img class="group list-group-image" src="../image/map.JPG" alt="" /></a>                 
+                <div class="caption">
+                	<br>
+                    <h3 class="group inner list-group-item-heading"><%=bean.getTitle()%></h3>
+                    <h4 class="text-right">By <%=bean.getCreateby()%></h4>                
+                    <h4>여행 일수 : <%=bean.getStartDat()%>~<%=bean.getEndDat() %></h4> 
+                                                
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+ 							                   	                           
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </div>   
+         <%} %>                                  
+    </div>  
+    
 </div>
 	   					
  		
@@ -106,14 +96,7 @@
 						<div class="tab-pane" id="tab_default_2">
 							<div class ="container">
 	   							<div class ="row">
-	   								<br>	   	
-	   								<div class ="col-lg-3 col-sm-6">
-	   								<a href="#myModal2" class="thumbnail" data-toggle="modal" data-target="#myModal2">
-     									<img src="../image/go.JPG" alt="...">
-   									</a>
-   									</div>							
-	   								<div class ="col-lg-3 col-sm-6"><div class ="well"><a href="#myModal2" data-toggle="modal" data-target="#myModal2">명소 등록하기</a></div></div>
-	   								<div class ="col-lg-3 col-sm-6"><div class ="well"><a href ="#">일정 만들기</a></div></div>	   							   								
+	   								
 	   							</div>
 	   						</div>
  		
@@ -163,7 +146,7 @@
     					  </div>
 						</div>
 						<div class="tab-pane" id="tab_default_4">
-							<form action="/tripAlchemist/update" method ="post">
+							<form action="/tripAlchemist/Update" method ="post">
       						<br>
       						<div class="container">
     							<div class="row clearfix">

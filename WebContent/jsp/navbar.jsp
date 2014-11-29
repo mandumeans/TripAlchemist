@@ -37,7 +37,7 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="main.jsp">Home</a></li>
-            <li><a href="#about">여행일정찾기</a></li>
+            <li><a href="tripList.jsp">여행일정찾기</a></li>
             <li><a href="#contact">명소찾기</a></li>
             <%if(memberDTO == null){ %>
             <li><a href="#myModal" data-toggle="modal" data-target="#myModal">내일정만들기</a></li>
@@ -82,7 +82,7 @@
                     	<input name ="password" type="password" class="form-control"  placeholder="패스워드를 입력하세요." required>
                     </div>
                     
-					<p class="text-right"><a href="#">비밀번호를 잊어버렸나요?</a></p>
+					<p class="text-right"><a href="NewFile.jsp">비밀번호를 잊어버렸나요?</a></p>
 				</div>
         		<div class="modal-footer">
           			<a href="#" data-dismiss="modal" class="btn btn-default">닫기</a>

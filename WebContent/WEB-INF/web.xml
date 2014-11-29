@@ -34,14 +34,6 @@
     <servlet-class>com.ta.web.SavetripServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>Update</servlet-name>
-    <url-pattern>/update</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <servlet-name>Update</servlet-name>
-    <servlet-class>com.ta.web.Update</servlet-class>
-  </servlet>
-  <servlet-mapping>
     <servlet-name>Login</servlet-name>
     <url-pattern>/login</url-pattern>
   </servlet-mapping>
@@ -57,7 +49,6 @@
     <servlet-name>Register</servlet-name>
     <servlet-class>com.ta.web.Register</servlet-class>
   </servlet>
-
   <resource-ref>
     <description>DB Connection</description>
     <res-ref-name>jdbc/tripalchemist</res-ref-name>
