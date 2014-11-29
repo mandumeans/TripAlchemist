@@ -49,6 +49,7 @@
     <servlet-name>Register</servlet-name>
     <servlet-class>com.ta.web.Register</servlet-class>
   </servlet>
+  
   <resource-ref>
     <description>DB Connection</description>
     <res-ref-name>jdbc/tripalchemist</res-ref-name>

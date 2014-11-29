@@ -58,7 +58,7 @@
         
         </div>   
      <%
-ScheduleDao bdao = new ScheduleDao();
+ ScheduleDao bdao = new ScheduleDao();
  Vector<ScheduleList> vector = new Vector();
  vector = bdao.getAllBoard();
 
