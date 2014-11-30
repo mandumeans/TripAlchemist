@@ -41,14 +41,12 @@
 		}
 	</style>
 	<link href="../css/bootstrap.min.css" rel="stylesheet">
-	<link href ="../css/datepicker.css" rel="stylesheet">
 	<script type="text/javascript" 
 			src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-EDvVM7eLhn0JWHezI7x2eGmAhre2BjE&sensor=FALSE">
 	</script>
 	<link href ="../css/index.css" rel ="stylesheet">
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script type="text/javascript" src="../js/bootstrap.min.js"></script>
-	<script type ="text/javascript" src ="../js/bootstrap-datepicker.js"></script>
 	<script type ="text/javascript" src ="../js/tripmaker.js"></script>
 	</head>
 	<body onload="initialize()">

@@ -21,6 +21,8 @@
 	}
 </style>
 <script type ="text/javascript" src ="../js/navbar.js"></script>
+<script type ="text/javascript" src ="../js/bootstrap-datepicker.js"></script>
+<link href ="../css/datepicker.css" rel="stylesheet">
 </head>
 <body>
 <div class="navbar navbar-inverse navbar-fixed-top">
@@ -38,7 +40,7 @@
           <ul class="nav navbar-nav">
             <li class="active"><a href="main.jsp">Home</a></li>
             <li><a href="tripList.jsp">여행일정찾기</a></li>
-            <li><a href="#contact">명소찾기</a></li>
+            <li><a href="AddLandmark.jsp">명소찾기</a></li>
             <%if(memberDTO == null){ %>
             <li><a href="#myModal" data-toggle="modal" data-target="#myModal">내일정만들기</a></li>
             <%}else{ %>
@@ -108,7 +110,7 @@
                     	<input type ="text" name="title" class = "form-control" placeholder="예 : 5박 6일 유럽 여행 명소여행" autofocus required>
 					</div>
 					
-        				<h4 id="title">여행을 시작할 날짜와 끝낼 날짜를 입력해주세요.</h4>
+        				<h4 id="title">여행을 시작할 날짜와 끝낼 날짜를 입력해주세요.<span id="days"></span></h4>
                     	<label class="sr-only"></label>
                     	<input type ="text" name="startDate" class = "form-control" data-date-format="yyyy-mm-dd" placeholder="시작 날짜"  id ="start_date" required>
                     </div>     

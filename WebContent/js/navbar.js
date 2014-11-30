@@ -24,12 +24,20 @@ $(document).ready(function() {
 	
 	var checkout = $('#end_date').datepicker({
 		onRender : function(date) {
-			return date.valueOf() <= checkin.date.valueOf() ? 'disabled' :  '';
+			return date.valueOf() < checkin.date.valueOf() ? 'disabled' :  '';
 		}
 	}).on('changeDate',	function(ev) {
 		checkout.hide();
 		var totalDays = ((checkout.date - checkin.date) / 86400000) + 1;
-		$('#title').append('(' + totalDays + '일)');
+		$('#days').empty();
+		if(totalDays > 60){
+			alert('60일 이상의 여행계획은 불가능 합니다.');
+
+			checkout.setValue(checkin.date);
+			$('#days').append('(1일)');
+		} else {
+			$('#days').append('(' + totalDays + '일)');
+		}
 	}).data('datepicker');
 	
 }); // document.ready end

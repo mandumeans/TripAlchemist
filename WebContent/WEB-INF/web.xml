@@ -42,6 +42,14 @@
     <servlet-class>com.ta.web.LoadtripServlet</servlet-class>
   </servlet>
   <servlet-mapping>
+    <servlet-name>AddLandmarkServlet</servlet-name>
+    <url-pattern>/addLandmark</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>AddLandmarkServlet</servlet-name>
+    <servlet-class>com.ta.web.AddLandmarkServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
     <servlet-name>Login</servlet-name>
     <url-pattern>/login</url-pattern>
   </servlet-mapping>
