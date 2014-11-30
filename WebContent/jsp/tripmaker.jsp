@@ -30,6 +30,14 @@
 			height : 51px;
 			margin-top : 25px;
 			float: right;
+			display: block;
+		}
+		.desc{
+			margin-left:10%;
+			width:20%;
+			float: left;
+			display: block;
+			padding-top:30px;
 		}
 	</style>
 	<link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -60,6 +68,12 @@
 				</ul>
 				<div class="tab-content"></div>
 			</div>
+		</div>
+		<div class="jumbotron desc" style="display:none;">
+		Author <h3><span id="writer"></span></h3></br>
+		Start date <h3><span id="sDate"></span></h3></br>
+		End date <h3><span id="eDate"></span></h3></br>
+		Total days <h3><span id="tdays"></span></h3>
 		</div>
 		<a id="btnComplete" class="btnComplete btn btn-primary"><h4>Complete!!</h4></a>
 		<div class="modal fade" id="hotelRecomPopup">

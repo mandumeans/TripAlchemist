@@ -71,7 +71,7 @@
  				%>  
         <div class="item  col-xs-4 col-lg-4">
             <div class="thumbnail">
-                 <a href ="tripmaker.jsp"><img class="group list-group-image" src="../image/map.JPG" alt="" /></a>                 
+                 <a href ="tripmaker.jsp?tripId=<%=bean.getTripNum()%>"><img class="group list-group-image" src="../image/map.JPG" alt="" /></a>                 
                 <div class="caption">
                 	<br>
                     <h3 class="group inner list-group-item-heading"><%=bean.getTitle()%></h3>

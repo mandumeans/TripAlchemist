@@ -29,7 +29,7 @@ public class ScheduleDao {
     	   this.conn();
     	   // 쿼리 준비
     	 
-    	   String sql = "select title,startDat, endDat,createdat, createby from tripmst";
+    	   String sql = "select tripNum, title,startDat, endDat,createdat, createby from tripmst";
     	   // 쿼리 실행
     	   stmt = conn.prepareStatement(sql);
     	   // 쿼리 실행후 결과를 resultset이 받아줌
@@ -37,11 +37,12 @@ public class ScheduleDao {
     	   // 반복문을 이용하여 데이터를 빈클래스에 담은후에 그빈 클래스를 백터에 저장
     	   while(rs.next()){
     	    bean = new ScheduleList();
-    	    bean.setTitle(rs.getString(1));
-    	    bean.setStartDat(rs.getString(2));
-    	    bean.setEndDat(rs.getString(3));
-    	    bean.setCreatedat(rs.getString(4));
-    	    bean.setCreateby(rs.getString(5));
+    	    bean.setTripNum(rs.getInt(1));
+    	    bean.setTitle(rs.getString(2));
+    	    bean.setStartDat(rs.getString(3));
+    	    bean.setEndDat(rs.getString(4));
+    	    bean.setCreatedat(rs.getString(5));
+    	    bean.setCreateby(rs.getString(6));
     	    
     	    // 빈클래스에 담은 데이터를 백터에 추가
     	    vector.add(bean);

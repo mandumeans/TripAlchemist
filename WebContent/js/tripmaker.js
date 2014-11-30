@@ -263,31 +263,97 @@ $(document).ready(function() {
 	        var varName = parameters[i].split('=')[0];
 	        if (varName.toUpperCase() == param.toUpperCase()) {
 	            returnValue = parameters[i].split('=')[1];
+	            
 	            return decodeURIComponent(returnValue);
+	            //return decodeURIComponent((new RegExp('[?|&]' + returnValue + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
 	        }
+	        
 	    }
 	};
+	
+	var getURLParameter = function (name) {
+	    return decodeURIComponent(
+	        (location.search.match(RegExp("[?|&]"+name+'=(.+?)(&|$)'))||[,null])[1]
+	    ).replace(/\+/gi," ");  
+	}
 	
 	var parseDate = function (str){
 		var mdy = str.split('-');
 	    return new Date(mdy[0], mdy[1], mdy[2]);
 	}
-
-	var title = getParameter('title');
-	var startDate = getParameter('startDate');
-	var endDate = getParameter('endDate');
 	
-	if(typeof title === 'undefined' || typeof startDate === 'undefined' || typeof endDate === 'undefined'){
+	var trip_id = getURLParameter('tripId');
+	var title = getURLParameter('title');
+	var startDate = getURLParameter('startDate');
+	var endDate = getURLParameter('endDate');
+	
+	if((title === 'null' && startDate === 'null' && endDate === 'null') && trip_id !== 'null' ){
+		//trip_id로 들어옴
+		$.ajax({
+			url : "/tripAlchemist/loadtrip",
+			type : "GET",
+			data : {tripId : trip_id},
+			dataType : "json",
+			contentType : "application/json",
+			timeout : 10000,
+			success : function(result) {
+				var endDat;
+				var startDat;
+				var createby;
+				var totalDays;
+				var cnt = 0;
+				$.each(result,function(index) {
+					var title = result[index].title;
+					if(cnt == 0){
+						startDat = result[index].startDat;
+						endDat = result[index].endDat;
+						totalDays = (((new Date(endDat)) - (new Date(startDat))) / 86400000) + 1;
+						makeDaysTab(totalDays);
+					}
+					createby = result[index].createby;
+					var placeLng = result[index].placeLng;
+					var placeLat = result[index].placeLat;
+					var placeAddress = result[index].placeAddress;
+					var seqOrder = result[index].seqOrder;
+					var seqDay = result[index].seqDay;
+					var placeNum = result[index].placeNum;
+					var placeName = result[index].placeName;
+					
+					// click event시
+					days[seqDay].push(
+							new placeInfo('#day' + parseInt(seqDay) , parseFloat(placeLat), parseFloat(placeLng), placeAddress, placeName, placeNum, '', 
+									placeMarker(new google.maps.LatLng(placeLat, placeLng), placeNum)
+							)
+					);
+					cnt++;
+				});
+				refreshMarkerList();
+				$('#btnComplete').attr("disabled", "disabled");
+				$('#writer').append(createby);
+				$('#sDate').append(startDat);
+				$('#eDate').append(endDat);
+				$('#tdays').append(totalDays);
+				$('.desc').show();
+			},
+			error : function(result) {
+				alert('failed to get trip information');
+				location.href = 'main.jsp';
+			}
+		});
+	} else if((title !== 'null' && startDate !== 'null' & endDate !== 'null') && trip_id === 'null' ){
+		
+		var checkin = parseDate(startDate);
+		var checkout = parseDate(endDate);
+
+		
+		var totalDays = ((checkout - checkin) / 86400000) + 1;
+		makeDaysTab(totalDays);
+		
+	} else {
 		alert('Sorry. wrong access');
 		location.href = 'main.jsp';
 	}
 	
-	var checkin = parseDate(startDate);
-	var checkout = parseDate(endDate);
-
-	
-	var totalDays = ((checkout - checkin) / 86400000) + 1;
-	makeDaysTab(totalDays);
 
 	// Show Landmark button event
 	$('#btnLandmarkShow').click(function() {
@@ -395,7 +461,7 @@ $(document).ready(function() {
 			}
 		}).done(function( data ) {
 			$('#loadingAnimation').modal('hide');
-		});; // ajax end
+		}); // ajax end
 	}); // btnhotelRecommend event
 
 	// hotel Recommend button event

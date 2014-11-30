@@ -34,6 +34,14 @@
     <servlet-class>com.ta.web.SavetripServlet</servlet-class>
   </servlet>
   <servlet-mapping>
+    <servlet-name>LoadtripServlet</servlet-name>
+    <url-pattern>/loadtrip</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>LoadtripServlet</servlet-name>
+    <servlet-class>com.ta.web.LoadtripServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
     <servlet-name>Login</servlet-name>
     <url-pattern>/login</url-pattern>
   </servlet-mapping>
