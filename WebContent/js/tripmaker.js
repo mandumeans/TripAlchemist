@@ -100,6 +100,7 @@ function initialize() {
 			$(this).off('hide.bs.modal');			//이벤트 중복 발생 방지
 		});
 	});
+	
 }
 
 function insertNewPlace(location, title, category) {
@@ -182,6 +183,7 @@ function placeMarker(location, type) {
 
 
 function placeLandMarker(lat, lng, name) {
+	
 	var marker = new google.maps.Marker({
 		position : new google.maps.LatLng(lat, lng),
 		map : map,
@@ -194,6 +196,7 @@ function placeLandMarker(lat, lng, name) {
 
 	var infowindow = new google.maps.InfoWindow({
 		content : balloon,
+	    disableAutoPan: true
 	});
 
 	infowindow.open(map, marker);
@@ -361,6 +364,7 @@ $(document).ready(function() {
 			// 랜드마크에 대한 마커 다 지우기
 			removeAllLandmarker();
 		} else {
+
 			$.ajax({
 				url : "/tripAlchemist/hello",
 				type : "POST",
@@ -385,6 +389,7 @@ $(document).ready(function() {
 			}).done(function( data ) {
 				$('#loadingAnimation').modal('hide');
 			});; // ajax end
+
 		}
 	});
 
